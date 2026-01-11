@@ -27,11 +27,7 @@
             overflow: hidden;
         }
 
-        #app-container {
-            display: flex;
-            flex-grow: 1;
-            overflow: hidden;
-        }
+        #app-container { display: flex; flex-grow: 1; overflow: hidden; }
 
         #sidebar {
             width: 250px;
@@ -71,14 +67,8 @@
         }
 
         .evidence-btn {
-            padding: 15px;
-            background: #252525;
-            border: 1px solid #444;
-            border-radius: 8px;
-            cursor: pointer;
-            text-align: center;
-            color: #fff;
-            user-select: none;
+            padding: 15px; background: #252525; border: 1px solid #444; border-radius: 8px;
+            cursor: pointer; text-align: center; color: #fff; user-select: none;
         }
 
         .evidence-btn.included { background: var(--include-color); border-color: #28a745; }
@@ -86,40 +76,44 @@
 
         .info-list { list-style: none; padding: 0; margin: 15px 0; }
         .info-list li {
-            background: #2a2a2a;
-            margin-bottom: 8px;
-            padding: 12px;
-            border-radius: 5px;
-            border-inline-start: 3px solid var(--accent-color);
-            line-height: 1.5;
+            background: #2a2a2a; margin-bottom: 8px; padding: 12px; border-radius: 5px;
+            border-inline-start: 3px solid var(--accent-color); line-height: 1.5;
         }
 
         .list-container { display: flex; gap: 20px; height: 75vh; }
-        .ghost-names-column { width: 250px; overflow-y: auto; background: #151515; padding: 10px; border-radius: 10px; }
-        .ghost-details-column { flex-grow: 1; background: var(--card-bg); padding: 30px; border-radius: 10px; border: 1px solid #333; overflow-y: auto;}
+        .side-column { width: 250px; overflow-y: auto; background: #151515; padding: 10px; border-radius: 10px; }
+        .details-column { flex-grow: 1; background: var(--card-bg); padding: 30px; border-radius: 10px; border: 1px solid #333; overflow-y: auto;}
 
-        .ghost-list-item { padding: 12px; margin-bottom: 5px; border-radius: 6px; cursor: pointer; transition: 0.2s; }
-        .ghost-list-item.selected { background: #331111; border-inline-start: 4px solid var(--accent-color); }
+        .list-item { padding: 12px; margin-bottom: 5px; border-radius: 6px; cursor: pointer; transition: 0.2s; }
+        .list-item:hover { background: #222; }
+        .list-item.selected { background: #331111; border-inline-start: 4px solid var(--accent-color); }
 
         .ghost-card { background: #252525; padding: 20px; margin-top: 15px; border-radius: 8px; border-bottom: 2px solid #444; }
         .tag { display: inline-block; background: #441111; color: #ff8888; padding: 5px 12px; border-radius: 15px; font-size: 0.8rem; margin-inline-end: 5px; margin-top: 10px; }
         .search-box { width: 100%; padding: 12px; background: #151515; border: 1px solid #333; color: white; border-radius: 8px; margin-bottom: 15px; }
 
-        #lang-selector {
+        /* Map UI */
+        .map-display {
+            width: 100%;
             background: #111;
-            padding: 10px;
-            display: flex;
-            justify-content: center;
-            gap: 20px;
-            border-top: 1px solid #333;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #333;
+            overflow: hidden;
         }
-        .lang-btn {
-            color: var(--secondary-text);
-            cursor: pointer;
-            font-size: 0.9rem;
-            text-decoration: none;
+
+        .map-display img {
+            width: 100%;
+            display: block;
+            height: auto;
+            max-height: 500px;
+            object-fit: contain;
         }
-        .lang-btn:hover { color: var(--accent-color); }
+
+        #lang-selector {
+            background: #111; padding: 10px; display: flex; justify-content: center; gap: 20px; border-top: 1px solid #333;
+        }
+        .lang-btn { color: var(--secondary-text); cursor: pointer; font-size: 0.9rem; text-decoration: none; }
         .lang-btn.active { color: white; font-weight: bold; border-bottom: 2px solid var(--accent-color); }
     </style>
 </head>
@@ -131,6 +125,7 @@
             <button id="nav-ev" class="nav-btn active" onclick="showTab('evidence-tab', this)">🔍 الأدلة</button>
             <button id="nav-hunt" class="nav-btn" onclick="showTab('hunt-tab', this)">🏹 سلوك الصيد</button>
             <button id="nav-list" class="nav-btn" onclick="showTab('list-tab', this)">📜 قائمة الوحوش</button>
+            <button id="nav-maps" class="nav-btn" onclick="showTab('maps-tab', this)">🗺️ الخرائط والأدوات</button>
             <button id="nav-reset" class="nav-btn" onclick="resetEvidence()" style="margin-top:auto; font-size: 0.8rem; background: #444;">إعادة ضبط الأدلة</button>
         </div>
 
@@ -157,9 +152,18 @@
 
             <div id="list-tab" class="content-section">
                 <div class="list-container">
-                    <div class="ghost-names-column" id="ghost-names-list"></div>
-                    <div class="ghost-details-column" id="ghost-details-panel">
-                        <h3 id="list-placeholder" style="color: #666; text-align: center; margin-top: 50px;">اختر شبحاً لعرض بياناته المرتبة</h3>
+                    <div class="side-column" id="ghost-names-list"></div>
+                    <div class="details-column" id="ghost-details-panel">
+                        <h3 id="list-placeholder">اختر شبحاً لعرض بياناته المرتبة</h3>
+                    </div>
+                </div>
+            </div>
+
+            <div id="maps-tab" class="content-section">
+                <div class="list-container">
+                    <div class="side-column" id="maps-list-column"></div>
+                    <div class="details-column" id="map-details-panel">
+                        <h3 id="map-placeholder">اختر خريطة لعرض تفاصيلها</h3>
                     </div>
                 </div>
             </div>
@@ -174,101 +178,202 @@
     <script>
         const translations = {
             ar: {
-                brand: "PHASMO PRO", navEv: "🔍 الأدلة", navHunt: "🏹 سلوك الصيد", navList: "📜 قائمة الوحوش",
+                brand: "PHASMO PRO", navEv: "🔍 الأدلة", navHunt: "🏹 سلوك الصيد", navList: "📜 قائمة الوحوش", navMaps: "🗺️ الخرائط والأدوات",
                 navReset: "إعادة ضبط الأدلة", evTitle: "تحديد الشبح", huntTitle: "البحث بسلوك الصيد",
-                huntPlaceholder: "ابحث عن ميزة معينة...", listPlaceholder: "اختر شبحاً لعرض بياناته المرتبة", officialEv: "الأدلة الرسمية:"
+                huntPlaceholder: "ابحث عن ميزة معينة...", listPlaceholder: "اختر شبحاً لعرض بياناته المرتبة", 
+                mapPlaceholder: "اختر خريطة لعرض تفاصيلها ومواقع الأدوات", officialEv: "الأدلة الرسمية:", 
+                cursedTitle: "أماكن الأدوات الملعونة (Cursed Items):"
             },
             en: {
-                brand: "PHASMO PRO", navEv: "🔍 Evidence", navHunt: "🏹 Hunt Behavior", navList: "📜 Ghost List",
+                brand: "PHASMO PRO", navEv: "🔍 Evidence", navHunt: "🏹 Hunt Behavior", navList: "📜 Ghost List", navMaps: "🗺️ Maps & Items",
                 navReset: "Reset Evidence", evTitle: "Identify Ghost", huntTitle: "Search Hunt Behavior",
-                huntPlaceholder: "Search for a specific trait...", listPlaceholder: "Select a ghost to view details", officialEv: "Official Evidence:"
+                huntPlaceholder: "Search for a specific trait...", listPlaceholder: "Select a ghost to view details", 
+                mapPlaceholder: "Select a map to view details and item locations", officialEv: "Official Evidence:",
+                cursedTitle: "Cursed Possession Locations:"
             }
         };
 
         const ghosts = [
-            { 
-                name: "Spirit", 
-                infoAr: ["وقت الكروسفكس بعد استخدام السِمج: 3:10", "شبح متوازن بدون سلوك فريد أثناء الصيد"],
-                infoEn: ["Smudge stick duration: 3 minutes 10 seconds", "Standard movement speed, no unique hunting traits"],
-                evidence: ["EMF 5", "Spirit Box", "Ghost Writing"] 
+            { name: "Spirit", infoAr: ["وقت الكروسفكس بعد استخدام السِمج: 3:10", "بدون سلوك فريد"], infoEn: ["Smudge duration: 3:10", "No unique speed traits"], evidence: ["EMF 5", "Spirit Box", "Ghost Writing"] },
+            { name: "Wraith", infoAr: ["لا يترك أقدام بالملح", "ينتقل للاعب"], infoEn: ["No salt footprints", "Teleports to player"], evidence: ["EMF 5", "Spirit Box", "DOTS"] },
+            { name: "Phantom", infoAr: ["يختفي في الصور", "سرعة وميض بطيئة"], infoEn: ["Invisible in photos", "Slow blinking during hunt"], evidence: ["Spirit Box", "Fingerprints", "DOTS"] },
+            { name: "Poltergeist", infoAr: ["رمي أشياء متعددة", "قوي في الصيد"], infoEn: ["Multi-throw", "Strong throwing during hunt"], evidence: ["Spirit Box", "Fingerprints", "Ghost Writing"] },
+            { name: "Banshee", infoAr: ["صرخة Parabolic", "يستهدف لاعب واحد"], infoEn: ["Parabolic Mic scream", "Targets one player"], evidence: ["Fingerprints", "Ghost Orb", "DOTS"] },
+            { name: "Jinn", infoAr: ["سريع مع الكهرباء", "لا يطفئ الكهرباء"], infoEn: ["Fast if fuse box ON", "Never turns off fuse box"], evidence: ["EMF 5", "Fingerprints", "Freezing"] },
+            { name: "Mare", infoAr: ["يصطاد في الظلام", "يطفئ الضوء فوراً"], infoEn: ["Hunts in dark", "Instantly turns off lights"], evidence: ["Spirit Box", "Ghost Orb", "Ghost Writing"] },
+            { name: "Revenant", infoAr: ["سريع جداً عند الرؤية", "بطيء عند الاختباء"], infoEn: ["Fast in LOS", "Very slow if hidden"], evidence: ["Ghost Orb", "Ghost Writing", "Freezing"] },
+            { name: "Shade", infoAr: ["خجول", "لا يصطاد بوجود لاعبين"], infoEn: ["Shy ghost", "Won't hunt with players in room"], evidence: ["EMF 5", "Ghost Writing", "Freezing"] },
+            { name: "Demon", infoAr: ["يصطاد في أي وقت", "سِمج 60 ثانية"], infoEn: ["Any sanity hunt", "Smudge lasts 60s"], evidence: ["Fingerprints", "Ghost Writing", "Freezing"] },
+            { name: "Yurei", infoAr: ["يخسف العقل بالأبواب", "سِمج يحبسه"], infoEn: ["Door slams drain sanity", "Smudge traps in room"], evidence: ["Ghost Orb", "Freezing", "DOTS"] },
+            { name: "Oni", infoAr: ["نشيط جداً", "لا يظهر دخان الهواء"], infoEn: ["Very active", "No air ball event"], evidence: ["EMF 5", "Freezing", "DOTS"] },
+            { name: "Yokai", infoAr: ["يصطاد عند الكلام", "سمع محدود"], infoEn: ["Hunts if you talk", "Limited hearing range"], evidence: ["Spirit Box", "Ghost Orb", "DOTS"] },
+            { name: "Hantu", infoAr: ["سريع في البرد", "أنفاس ظاهرة"], infoEn: ["Fast in cold", "Freezing breath in hunt"], evidence: ["Fingerprints", "Ghost Orb", "Freezing"] }
+        ];
+
+        // مصفوفة الخرائط - تسحب الصور من مجلد maps محلي
+        const mapsData = [
+            {
+                name: "6 Tanglewood Drive",
+                file: "maps/tanglewood.png",
+                itemsAr: [
+                    "ويجا: في القبو على الطاولة",
+                    "الكروت: في غرفة المعيشة على الطاولة الصغيرة",
+                    "يد القرد: في غرفة الطعام داخل خزانة العرض",
+                    "اداة الموسيقى: في غرفة الحضانة على الرف",
+                    "المرآة: في غرفة النوم الرئيسية على الجدار",
+                    "فودو: في المرآب فوق الصناديق",
+                    "دائرة الاستدعاء: في منتصف القبو"
+                ],
+                itemsEn: ["Ouija: Basement", "Tarot: Living Room", "Monkey Paw: Dining Room", "Music Box: Nursery", "Mirror: Master Bedroom", "Voodoo: Garage", "Summoning Circle: Basement"]
             },
-            { 
-                name: "Wraith", 
-                infoAr: ["لا يترك آثار أقدام بالملح", "يمكنه التنقل مباشرة إلى اللاعب", "يتأذى بقوة من السِمج"],
-                infoEn: ["Never leaves footsteps in salt", "Can teleport to player's location", "Vulnerable to Smudge Sticks"],
-                evidence: ["EMF 5", "Spirit Box", "DOTS"] 
+            {
+                name: "42 Edgefield Road",
+                file: "maps/edgefield.png",
+                itemsAr: [
+                    "ويجا: غرفة الغسيل فوق الغسالة",
+                    "الكروت: طاولة المدخل فور الدخول",
+                    "يد القرد: غرفة الأطفال (الطابق العلوي)",
+                    "اداة الموسيقى: غرفة المعيشة على الطاولة",
+                    "المرآة: ممر المدخل خلف الباب الرئيسي",
+                    "فودو: غرفة النوم الزرقاء فوق السرير",
+                    "دائرة الاستدعاء: في القبو"
+                ],
+                itemsEn: ["Ouija: Laundry room", "Tarot: Entry table", "Monkey Paw: Kids room", "Music Box: Living room", "Mirror: Entry wall", "Voodoo: Blue bedroom", "Summoning Circle: Basement"]
             },
-            { 
-                name: "Phantom", 
-                infoAr: ["لا يظهر بوضوح في الصور", "يختفي كثيرًا أثناء الصيد", "النظر له يقلل العقل بسرعة"],
-                infoEn: ["Invisible in photos", "Blinks slowly during hunts (stays invisible longer)", "Looking at it drains sanity rapidly"],
-                evidence: ["Spirit Box", "Fingerprints", "DOTS"] 
+            {
+                name: "10 Ridgeview Court",
+                file: "maps/ridgeview.png",
+                itemsAr: [
+                    "ويجا: المطبخ داخل خزانة المؤن",
+                    "الكروت: يمين المدخل على الطاولة",
+                    "يد القرد: غرفة النوم بالطابق العلوي (يسار)",
+                    "اداة الموسيقى: ممر الطابق العلوي",
+                    "المرآة: ممر القبو على الجدار",
+                    "فودو: المرآب خلف السيارة",
+                    "دائرة الاستدعاء: في منتصف القبو"
+                ],
+                itemsEn: ["Ouija: Kitchen pantry", "Tarot: Entrance right", "Monkey Paw: Upstairs bedroom", "Music Box: Upstairs hallway", "Mirror: Basement wall", "Voodoo: Garage", "Summoning Circle: Basement"]
             },
-            { 
-                name: "Poltergeist", 
-                infoAr: ["يرمي عدة أشياء دفعة واحدة", "أثناء الصيد يرمي الأشياء لمسافات بعيدة", "تفريغ الغرفة من الأغراض يضعفه"],
-                infoEn: ["Throws multiple objects at once", "Throws items frequently and further during hunts", "Empty rooms with no objects weaken its ability"],
-                evidence: ["Spirit Box", "Fingerprints", "Ghost Writing"] 
+            {
+                name: "Grafton Farmhouse",
+                file: "maps/grafton.png",
+                itemsAr: [
+                    "ويجا: غرفة النوم خلف المطبخ",
+                    "الكروت: غرفة الطعام على الطاولة",
+                    "يد القرد: الطابق العلوي (غرفة النوم اليسرى)",
+                    "اداة الموسيقى: البهو الرئيسي على الطاولة",
+                    "المرآة: غرفة المعيشة خلف الأريكة",
+                    "فودو: غرفة الحضانة (الطابق العلوي)",
+                    "دائرة الاستدعاء: التخزين خلف المطبخ"
+                ],
+                itemsEn: ["Ouija: Master bedroom", "Tarot: Dining room", "Monkey Paw: Upstairs bedroom", "Music Box: Foyer", "Mirror: Living room", "Voodoo: Nursery", "Summoning Circle: Storage"]
             },
-            { 
-                name: "Banshee", 
-                infoAr: ["صرخة فريدة في Parabolic Mic", "غالبًا يغني في الـ Ghost Events", "يستهدف لاعبًا واحدًا فقط"],
-                infoEn: ["Unique scream through Parabolic Microphone", "More likely to perform singing ghost events", "Targets one specific player (stays fixed until they die)"],
-                evidence: ["Fingerprints", "Ghost Orb", "DOTS"] 
+            {
+                name: "Bleasdale Farmhouse",
+                file: "maps/bleasdale.png",
+                itemsAr: [
+                    "ويجا: في ورشة العمل (Workshop)",
+                    "الكروت: في المكتب (Office) بالمنضدة",
+                    "يد القرد: في العلية (Attic) فوق الصناديق",
+                    "اداة الموسيقى: غرفة المعيشة بجانب التلفاز",
+                    "المرآة: في الممر العلوي",
+                    "فودو: غرفة النوم بجانب الحمام",
+                    "دائرة الاستدعاء: في القبو"
+                ],
+                itemsEn: ["Ouija: Workshop", "Tarot: Office", "Monkey Paw: Attic", "Music Box: Living room", "Mirror: Upstairs hall", "Voodoo: Bedroom", "Summoning Circle: Basement"]
             },
-            { 
-                name: "Jinn", 
-                infoAr: ["سريع جداً إذا رآك والكهرباء مشغلة", "لا يطفئ الكهرباء", "يفقد سرعته عند الاقتراب"],
-                infoEn: ["Moves faster with fuse box ON and line-of-sight", "Will never turn off the fuse box", "Loses speed when close to player"],
-                evidence: ["EMF 5", "Fingerprints", "Freezing"] 
+            {
+                name: "Camp Woodwind",
+                file: "maps/woodwind.png",
+                itemsAr: [
+                    "ويجا: خيمة الطعام",
+                    "الكروت: الخيمة الصفراء",
+                    "يد القرد: بجانب خيمة الألعاب",
+                    "اداة الموسيقى: الخيمة الحمراء",
+                    "المرآة: بجانب الخيمة البيضاء الكبيرة",
+                    "فودو: وسط المخيم عند الجذوع",
+                    "دائرة الاستدعاء: منطقة العشاء المفتوحة"
+                ],
+                itemsEn: ["Ouija: Food tent", "Tarot: Yellow tent", "Monkey Paw: Near Games tent", "Music Box: Red tent", "Mirror: Large white tent", "Voodoo: Center logs", "Summoning Circle: Dining area"]
             },
-            { 
-                name: "Mare", 
-                infoAr: ["لا يشغل أي ضوء", "يطفئ الإضاءة فور تشغيلها", "يفضل الظلام ويصطاد مبكرًا فيه"],
-                infoEn: ["Cannot turn lights ON", "Instantly turns off lights switched on by player", "Hunts earlier in the dark"],
-                evidence: ["Spirit Box", "Ghost Orb", "Ghost Writing"] 
+            {
+                name: "Maple Lodge Campsite",
+                file: "maps/maplelodge.png",
+                itemsAr: [
+                    "ويجا: خيمة التخزين",
+                    "الكروت: عند طاولة الاستقبال (المدخل)",
+                    "يد القرد: عند رصيف القوارب (Pier)",
+                    "اداة الموسيقى: بجانب نار المخيم الكبيرة",
+                    "المرآة: عند الحمام الخارجي (Blue Tent)",
+                    "فودو: في منطقة الطبخ",
+                    "دائرة الاستدعاء: داخل الكوخ الخشبي (Cabin)"
+                ],
+                itemsEn: ["Ouija: Storage tent", "Tarot: Entrance", "Monkey Paw: Pier", "Music Box: Campfire", "Mirror: Restrooms", "Voodoo: Kitchen area", "Summoning Circle: Cabin"]
             },
-            { 
-                name: "Revenant", 
-                infoAr: ["سرعته بطيئة جداً إذا لم يراك (≈1)", "يصبح سريعاً جداً عند رؤيتك (≈3)"],
-                infoEn: ["Extremely slow (1.1m/s) when player is hidden", "Extremely fast (3m/s) when player is in line-of-sight"],
-                evidence: ["Ghost Orb", "Ghost Writing", "Freezing"] 
+            {
+                name: "Prison",
+                file: "maps/prison.png",
+                itemsAr: [
+                    "ويجا: عند المدخل الرئيسي (Security)",
+                    "الكروت: غرفة الزوار (Visitation)",
+                    "يد القرد: في ممرات الزنازين",
+                    "اداة الموسيقى: خلف مكتب الاستقبال",
+                    "المرآة: ممر المدخل الأيمن",
+                    "فودو: في منطقة الكافتيريا",
+                    "دائرة الاستدعاء: في ساحة السجن"
+                ],
+                itemsEn: ["Ouija: Security", "Tarot: Visitation", "Monkey Paw: Cell blocks", "Music Box: Entry desk", "Mirror: Entry hallway", "Voodoo: Cafeteria", "Summoning Circle: Yard"]
             },
-            { 
-                name: "Shade", 
-                infoAr: ["لن يصطاد بوجود لاعبين في نفس الغرفة", "شبح خجول جداً"],
-                infoEn: ["Will not hunt if players are in the same room", "Very shy; less likely to perform events"],
-                evidence: ["EMF 5", "Ghost Writing", "Freezing"] 
+            {
+                name: "Sunny Meadows",
+                file: "maps/sunnymeadows.png",
+                itemsAr: [
+                    "جميع الأدوات: في المصلى (Chapel) عند المدخل الرئيسي",
+                    "ملاحظة: تظهر الأدوات السبعة معاً في المصلى في هذه الخريطة"
+                ],
+                itemsEn: ["All Items: In the Chapel at the entrance"]
             },
-            { 
-                name: "Demon", 
-                infoAr: ["يصطاد مبكراً جداً", "وقت السِمج ضده دقيقة واحدة فقط", "عدواني للغاية"],
-                infoEn: ["Can hunt at any sanity (special ability)", "Smudge sticks only stop it for 60 seconds", "Most aggressive ghost"],
-                evidence: ["Fingerprints", "Ghost Writing", "Freezing"] 
+            {
+                name: "Point Hope",
+                file: "maps/pointhope.png",
+                itemsAr: [
+                    "ويجا: الطابق 2 (غرفة الألعاب)",
+                    "الكروت: الطابق 1 (منطقة الجلوس)",
+                    "يد القرد: الطابق 3 (غرفة الاستراحة)",
+                    "اداة الموسيقى: الطابق 4 (غرفة النوم)",
+                    "المرآة: ممر السلالم",
+                    "فودو: الطابق 2 (خلف الرفوف)",
+                    "دائرة الاستدعاء: الطابق الأرضي (المدخل)"
+                ],
+                itemsEn: ["Ouija: Floor 2", "Tarot: Floor 1", "Monkey Paw: Floor 3", "Music Box: Floor 4", "Mirror: Stairwell", "Voodoo: Floor 2", "Summoning Circle: Ground floor"]
             },
-            { 
-                name: "Yurei", 
-                infoAr: ["يغلق الأبواب بقوة لخفض العقل", "السِمج يقيده في غرفته لمدة 90 ثانية"],
-                infoEn: ["Powerful door slams drain sanity (15%)", "Smudging it keeps it in its room for 90s"],
-                evidence: ["Ghost Orb", "Freezing", "DOTS"] 
+            {
+                name: "Brownstone High School",
+                file: "maps/school.png",
+                itemsAr: [
+                    "ويجا: داخل أول فصل يمين",
+                    "الكروت: في ممر المدخل الرئيسي",
+                    "يد القرد: فوق خشبة المسرح",
+                    "اداة الموسيقى: داخل المكتبة",
+                    "المرآة: ممر السلالم",
+                    "فودو: داخل صالة الرياضة",
+                    "دائرة الاستدعاء: في منتصف الساحة"
+                ],
+                itemsEn: ["Ouija: Classroom", "Tarot: Main hall", "Monkey Paw: Stage", "Music Box: Library", "Mirror: Stairwell", "Voodoo: Gym", "Summoning Circle: Courtyard"]
             },
-            { 
-                name: "Oni", 
-                infoAr: ["يظهر بكامل هيئته كثيراً", "أحداثه قوية وواضحة"],
-                infoEn: ["Visible for longer durations during events", "Never does the air-ball ghost event"],
-                evidence: ["EMF 5", "Freezing", "DOTS"] 
-            },
-            { 
-                name: "Yokai", 
-                infoAr: ["يصطاد مبكراً عند التحدث بقربه", "سمعه ضعيف أثناء الصيد"],
-                infoEn: ["Can hunt early (80% sanity) if you talk near it", "Can only hear players within 2.5 meters during hunt"],
-                evidence: ["Spirit Box", "Ghost Orb", "DOTS"] 
-            },
-            { 
-                name: "Hantu", 
-                infoAr: ["سريع جداً في الأماكن الباردة", "أنفاس ظاهرة في الصيد"],
-                infoEn: ["Faster in colder rooms, slower in warm rooms", "Freezing breath visible during hunts if fuse box is OFF"],
-                evidence: ["Fingerprints", "Ghost Orb", "Freezing"] 
+            {
+                name: "Willow Street House",
+                file: "maps/willow.png",
+                itemsAr: [
+                    "ويجا: داخل خزانة الممر",
+                    "الكروت: غرفة المعيشة",
+                    "يد القرد: الممر المؤدي للمرآب",
+                    "اداة الموسيقى: المطبخ",
+                    "المرآة: ممر القبو",
+                    "فودو: المرآب",
+                    "دائرة الاستدعاء: منتصف القبو"
+                ],
+                itemsEn: ["Ouija: Hallway closet", "Tarot: Living room", "Monkey Paw: Hallway", "Music Box: Kitchen", "Mirror: Basement hall", "Voodoo: Garage", "Summoning Circle: Basement"]
             }
         ];
 
@@ -278,60 +383,19 @@
 
         function changeLang(lang) {
             currentLang = lang;
-            const html = document.getElementById('main-html');
             const t = translations[lang];
+            document.getElementById('main-html').dir = (lang === 'ar') ? 'rtl' : 'ltr';
             
-            html.dir = (lang === 'ar') ? 'rtl' : 'ltr';
-            document.getElementById('brand-name').innerText = t.brand;
-            document.getElementById('nav-ev').innerText = t.navEv;
-            document.getElementById('nav-hunt').innerText = t.navHunt;
-            document.getElementById('nav-list').innerText = t.navList;
-            document.getElementById('nav-reset').innerText = t.navReset;
-            document.getElementById('ev-title').innerText = t.evTitle;
-            document.getElementById('hunt-title').innerText = t.huntTitle;
-            document.getElementById('hunt-search').placeholder = t.huntPlaceholder;
-            document.getElementById('list-placeholder').innerText = t.listPlaceholder;
+            ["brand-name", "nav-ev", "nav-hunt", "nav-list", "nav-maps", "nav-reset", "ev-title", "hunt-title", "list-placeholder", "map-placeholder"].forEach(id => {
+                if(document.getElementById(id)) document.getElementById(id).innerText = t[id.replace("-", "")] || t[id.split("-")[1]];
+            });
 
             document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
             document.getElementById('lang-' + lang).classList.add('active');
             
             updateEvidenceFilter();
             initGhostList();
-        }
-
-        function formatInfo(infoArr) {
-            return `<ul class="info-list">` + 
-                infoArr.map((item, index) => `<li>${index + 1} - ${item}</li>`).join('') + 
-                `</ul>`;
-        }
-
-        function updateEvidenceFilter() {
-            const filtered = ghosts.filter(g => 
-                included.every(e => g.evidence.includes(e)) && 
-                !excluded.some(e => g.evidence.includes(e))
-            );
-
-            document.getElementById('evidence-results').innerHTML = filtered.map(g => `
-                <div class="ghost-card">
-                    <h2 style="color:var(--accent-color); margin-bottom:5px;">${g.name}</h2>
-                    ${formatInfo(currentLang === 'ar' ? g.infoAr : g.infoEn)}
-                    ${g.evidence.map(e => `<span class="tag">${e}</span>`).join('')}
-                </div>
-            `).join('');
-        }
-
-        function searchByHunt() {
-            const q = document.getElementById('hunt-search').value.toLowerCase();
-            const res = ghosts.filter(g => {
-                const info = (currentLang === 'ar' ? g.infoAr : g.infoEn).join(" ").toLowerCase();
-                return info.includes(q) || g.name.toLowerCase().includes(q);
-            });
-            document.getElementById('hunt-results').innerHTML = res.map(g => `
-                <div class="ghost-card">
-                    <h2 style="color:var(--accent-color)">${g.name}</h2>
-                    ${formatInfo(currentLang === 'ar' ? g.infoAr : g.infoEn)}
-                </div>
-            `).join('');
+            initMapsList();
         }
 
         function initGhostList() {
@@ -339,15 +403,15 @@
             list.innerHTML = '';
             ghosts.forEach(g => {
                 const div = document.createElement('div');
-                div.className = 'ghost-list-item';
+                div.className = 'list-item';
                 div.innerText = g.name;
                 div.onclick = () => {
-                    document.querySelectorAll('.ghost-list-item').forEach(i => i.classList.remove('selected'));
+                    document.querySelectorAll('#ghost-names-list .list-item').forEach(i => i.classList.remove('selected'));
                     div.classList.add('selected');
+                    const info = currentLang === 'ar' ? g.infoAr : g.infoEn;
                     document.getElementById('ghost-details-panel').innerHTML = `
                         <h1 style="color:var(--accent-color)">${g.name}</h1>
-                        <hr style="border:0; border-top:1px solid #444; margin-bottom:20px;">
-                        ${formatInfo(currentLang === 'ar' ? g.infoAr : g.infoEn)}
+                        <ul class="info-list">${info.map(i => `<li>${i}</li>`).join('')}</ul>
                         <div style="margin-top:20px"><strong>${translations[currentLang].officialEv}</strong><br>
                         ${g.evidence.map(e => `<span class="tag">${e}</span>`).join('')}</div>
                     `;
@@ -356,6 +420,38 @@
             });
         }
 
+        function initMapsList() {
+            const list = document.getElementById('maps-list-column');
+            list.innerHTML = '';
+            mapsData.forEach(m => {
+                const div = document.createElement('div');
+                div.className = 'list-item';
+                div.innerText = m.name;
+                div.onclick = () => {
+                    document.querySelectorAll('#maps-list-column .list-item').forEach(i => i.classList.remove('selected'));
+                    div.classList.add('selected');
+                    const items = currentLang === 'ar' ? m.itemsAr : m.itemsEn;
+                    document.getElementById('map-details-panel').innerHTML = `
+                        <h1 style="color:var(--accent-color)">${m.name}</h1>
+                        <div class="map-display">
+                            <img src="${m.file}" alt="${m.name}" onerror="this.parentElement.innerHTML='<p style=padding:20px;color:#666;text-align:center>الصورة غير موجودة في المجلد maps/${m.file.split('/')[1]}</p>'">
+                        </div>
+                        <h3>${translations[currentLang].cursedTitle}</h3>
+                        <ul class="info-list">${items.map(i => `<li>${i}</li>`).join('')}</ul>
+                    `;
+                };
+                list.appendChild(div);
+            });
+        }
+
+        function showTab(id, btn) {
+            document.querySelectorAll('.content-section').forEach(s => s.classList.remove('active'));
+            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+            btn.classList.add('active');
+        }
+
+        // Evidence Logic
         document.querySelectorAll('.evidence-btn').forEach(btn => {
             btn.onclick = () => {
                 const val = btn.getAttribute('data-val');
@@ -371,11 +467,14 @@
             };
         });
 
-        function showTab(id, btn) {
-            document.querySelectorAll('.content-section').forEach(s => s.classList.remove('active'));
-            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-            document.getElementById(id).classList.add('active');
-            btn.classList.add('active');
+        function updateEvidenceFilter() {
+            const filtered = ghosts.filter(g => included.every(e => g.evidence.includes(e)) && !excluded.some(e => g.evidence.includes(e)));
+            document.getElementById('evidence-results').innerHTML = filtered.map(g => `
+                <div class="ghost-card">
+                    <h2 style="color:var(--accent-color)">${g.name}</h2>
+                    ${g.evidence.map(e => `<span class="tag">${e}</span>`).join('')}
+                </div>
+            `).join('');
         }
 
         function resetEvidence() {
@@ -384,7 +483,9 @@
             updateEvidenceFilter();
         }
 
+        // Start
         initGhostList();
+        initMapsList();
     </script>
 </body>
 </html>
