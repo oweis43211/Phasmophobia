@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="ar" dir="rtl" id="main-html">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -22,7 +22,14 @@
             color: var(--text-color);
             margin: 0;
             display: flex;
+            flex-direction: column;
             height: 100vh;
+            overflow: hidden;
+        }
+
+        #app-container {
+            display: flex;
+            flex-grow: 1;
             overflow: hidden;
         }
 
@@ -32,7 +39,7 @@
             display: flex;
             flex-direction: column;
             padding: 20px;
-            border-left: 2px solid #222;
+            border-inline-end: 2px solid #222;
         }
 
         .nav-btn {
@@ -45,7 +52,7 @@
             border-radius: 8px;
             font-size: 1rem;
             transition: 0.3s;
-            text-align: right;
+            text-align: inherit;
         }
 
         .nav-btn.active { background: var(--accent-color); color: white; font-weight: bold; }
@@ -56,7 +63,6 @@
 
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-        /* تنسيق الأدلة */
         .evidence-grid { 
             display: grid; 
             grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); 
@@ -78,19 +84,13 @@
         .evidence-btn.included { background: var(--include-color); border-color: #28a745; }
         .evidence-btn.excluded { background: var(--exclude-color); border-color: #dc3545; text-decoration: line-through; opacity: 0.7; }
 
-        /* تنسيق القوائم والمعلومات */
-        .info-list {
-            list-style: none;
-            padding: 0;
-            margin: 15px 0;
-        }
-
+        .info-list { list-style: none; padding: 0; margin: 15px 0; }
         .info-list li {
             background: #2a2a2a;
             margin-bottom: 8px;
             padding: 12px;
             border-radius: 5px;
-            border-right: 3px solid var(--accent-color);
+            border-inline-start: 3px solid var(--accent-color);
             line-height: 1.5;
         }
 
@@ -99,122 +99,211 @@
         .ghost-details-column { flex-grow: 1; background: var(--card-bg); padding: 30px; border-radius: 10px; border: 1px solid #333; overflow-y: auto;}
 
         .ghost-list-item { padding: 12px; margin-bottom: 5px; border-radius: 6px; cursor: pointer; transition: 0.2s; }
-        .ghost-list-item.selected { background: #331111; border-right: 4px solid var(--accent-color); }
+        .ghost-list-item.selected { background: #331111; border-inline-start: 4px solid var(--accent-color); }
 
         .ghost-card { background: #252525; padding: 20px; margin-top: 15px; border-radius: 8px; border-bottom: 2px solid #444; }
-        .tag { display: inline-block; background: #441111; color: #ff8888; padding: 5px 12px; border-radius: 15px; font-size: 0.8rem; margin-left: 5px; margin-top: 10px; }
+        .tag { display: inline-block; background: #441111; color: #ff8888; padding: 5px 12px; border-radius: 15px; font-size: 0.8rem; margin-inline-end: 5px; margin-top: 10px; }
         .search-box { width: 100%; padding: 12px; background: #151515; border: 1px solid #333; color: white; border-radius: 8px; margin-bottom: 15px; }
+
+        #lang-selector {
+            background: #111;
+            padding: 10px;
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            border-top: 1px solid #333;
+        }
+        .lang-btn {
+            color: var(--secondary-text);
+            cursor: pointer;
+            font-size: 0.9rem;
+            text-decoration: none;
+        }
+        .lang-btn:hover { color: var(--accent-color); }
+        .lang-btn.active { color: white; font-weight: bold; border-bottom: 2px solid var(--accent-color); }
     </style>
 </head>
 <body>
 
-    <div id="sidebar">
-        <h2 style="color: var(--accent-color); text-align: center;">PHASMO PRO</h2>
-        <button class="nav-btn active" onclick="showTab('evidence-tab', this)">🔍 الأدلة</button>
-        <button class="nav-btn" onclick="showTab('hunt-tab', this)">🏹 سلوك الصيد</button>
-        <button class="nav-btn" onclick="showTab('list-tab', this)">📜 قائمة الوحوش</button>
-        <button class="nav-btn" onclick="resetEvidence()" style="margin-top:auto; font-size: 0.8rem; background: #444;">إعادة ضبط الأدلة</button>
-    </div>
+    <div id="app-container">
+        <div id="sidebar">
+            <h2 id="brand-name" style="color: var(--accent-color); text-align: center;">PHASMO PRO</h2>
+            <button id="nav-ev" class="nav-btn active" onclick="showTab('evidence-tab', this)">🔍 الأدلة</button>
+            <button id="nav-hunt" class="nav-btn" onclick="showTab('hunt-tab', this)">🏹 سلوك الصيد</button>
+            <button id="nav-list" class="nav-btn" onclick="showTab('list-tab', this)">📜 قائمة الوحوش</button>
+            <button id="nav-reset" class="nav-btn" onclick="resetEvidence()" style="margin-top:auto; font-size: 0.8rem; background: #444;">إعادة ضبط الأدلة</button>
+        </div>
 
-    <div id="main-view">
-        
-        <div id="evidence-tab" class="content-section active">
-            <h2>تحديد الشبح</h2>
-            <div class="evidence-grid" id="evidence-container">
-                <div class="evidence-btn" data-val="EMF 5">EMF Level 5</div>
-                <div class="evidence-btn" data-val="Fingerprints">Ultraviolet</div>
-                <div class="evidence-btn" data-val="Ghost Writing">Ghost Writing</div>
-                <div class="evidence-btn" data-val="Freezing">Freezing Temperatures</div>
-                <div class="evidence-btn" data-val="Ghost Orb">Ghost Orbs</div>
-                <div class="evidence-btn" data-val="Spirit Box">Spirit Box</div>
-                <div class="evidence-btn" data-val="DOTS">DOTS Projector</div>
+        <div id="main-view">
+            <div id="evidence-tab" class="content-section active">
+                <h2 id="ev-title">تحديد الشبح</h2>
+                <div class="evidence-grid" id="evidence-container">
+                    <div class="evidence-btn" data-val="EMF 5">EMF Level 5</div>
+                    <div class="evidence-btn" data-val="Fingerprints">Ultraviolet</div>
+                    <div class="evidence-btn" data-val="Ghost Writing">Ghost Writing</div>
+                    <div class="evidence-btn" data-val="Freezing">Freezing Temperatures</div>
+                    <div class="evidence-btn" data-val="Ghost Orb">Ghost Orbs</div>
+                    <div class="evidence-btn" data-val="Spirit Box">Spirit Box</div>
+                    <div class="evidence-btn" data-val="DOTS">DOTS Projector</div>
+                </div>
+                <div id="evidence-results"></div>
             </div>
-            <div id="evidence-results"></div>
-        </div>
 
-        <div id="hunt-tab" class="content-section">
-            <h2>البحث بسلوك الصيد</h2>
-            <input type="text" class="search-box" id="hunt-search" placeholder="ابحث عن ميزة معينة..." onkeyup="searchByHunt()">
-            <div id="hunt-results"></div>
-        </div>
+            <div id="hunt-tab" class="content-section">
+                <h2 id="hunt-title">البحث بسلوك الصيد</h2>
+                <input type="text" class="search-box" id="hunt-search" placeholder="ابحث عن ميزة معينة..." onkeyup="searchByHunt()">
+                <div id="hunt-results"></div>
+            </div>
 
-        <div id="list-tab" class="content-section">
-            <div class="list-container">
-                <div class="ghost-names-column" id="ghost-names-list"></div>
-                <div class="ghost-details-column" id="ghost-details-panel">
-                    <h3 style="color: #666; text-align: center; margin-top: 50px;">اختر شبحاً لعرض بياناته المرتبة</h3>
+            <div id="list-tab" class="content-section">
+                <div class="list-container">
+                    <div class="ghost-names-column" id="ghost-names-list"></div>
+                    <div class="ghost-details-column" id="ghost-details-panel">
+                        <h3 id="list-placeholder" style="color: #666; text-align: center; margin-top: 50px;">اختر شبحاً لعرض بياناته المرتبة</h3>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
+    <div id="lang-selector">
+        <span class="lang-btn active" onclick="changeLang('ar')" id="lang-ar">العربية</span>
+        <span class="lang-btn" onclick="changeLang('en')" id="lang-en">English</span>
+    </div>
+
     <script>
-        // البيانات محولة إلى مصفوفات لنتمكن من عرضها كقائمة مرقمة
+        const translations = {
+            ar: {
+                brand: "PHASMO PRO", navEv: "🔍 الأدلة", navHunt: "🏹 سلوك الصيد", navList: "📜 قائمة الوحوش",
+                navReset: "إعادة ضبط الأدلة", evTitle: "تحديد الشبح", huntTitle: "البحث بسلوك الصيد",
+                huntPlaceholder: "ابحث عن ميزة معينة...", listPlaceholder: "اختر شبحاً لعرض بياناته المرتبة", officialEv: "الأدلة الرسمية:"
+            },
+            en: {
+                brand: "PHASMO PRO", navEv: "🔍 Evidence", navHunt: "🏹 Hunt Behavior", navList: "📜 Ghost List",
+                navReset: "Reset Evidence", evTitle: "Identify Ghost", huntTitle: "Search Hunt Behavior",
+                huntPlaceholder: "Search for a specific trait...", listPlaceholder: "Select a ghost to view details", officialEv: "Official Evidence:"
+            }
+        };
+
         const ghosts = [
-            { name: "Spirit", info: ["وقت الكروسفكس بعد استخدام السِمج: 3:10", "شبح متوازن بدون سلوك فريد أثناء الصيد"], evidence: ["EMF 5", "Spirit Box", "Ghost Writing"] },
-            { name: "Wraith", info: ["لا يترك آثار أقدام بالملح", "يمكنه التنقل مباشرة إلى اللاعب", "يتأذى بقوة من السِمج"], evidence: ["EMF 5", "Spirit Box", "DOTS"] },
-            { name: "Phantom", info: ["لا يظهر بوضوح في الصور", "يختفي كثيرًا أثناء الصيد", "النظر له يقلل العقل بسرعة"], evidence: ["Spirit Box", "Fingerprints", "DOTS"] },
-            { name: "Poltergeist", info: ["إذا رمى عدة أشياء دفعة واحدة فهو بولتر", "أثناء الصيد يرمي الأشياء لمسافات بعيدة جدًا", "تفريغ الغرفة من الأغراض يضعفه"], evidence: ["Spirit Box", "Fingerprints", "Ghost Writing"] },
-            { name: "Banshee", info: ["صرخة فريدة في Parabolic Mic", "غالبًا يغني في الـ Ghost Events", "يستهدف لاعبًا واحدًا فقط"], evidence: ["Fingerprints", "Ghost Orb", "DOTS"] },
-            { name: "Jinn", info: ["سرعته عادية", "إذا رآك من بعيد يصبح سريعًا جدًا", "إذا اقترب منك يعود للسرعة الطبيعية", "لا يستطيع استخدام قدرته بدون كهرباء"], evidence: ["EMF 5", "Fingerprints", "Freezing"] },
-            { name: "Mare", info: ["لا يشغل أي ضوء", "يطفئ الإضاءة فور تشغيلها", "يفضل الظلام ويصطاد مبكرًا فيه"], evidence: ["Spirit Box", "Ghost Orb", "Ghost Writing"] },
-            { name: "Revenant", info: ["سرعته بطيئة جدًا إذا لم يراك (≈1)", "يصبح سريعًا جدًا عند رؤيتك (≈3)", "السِمج يبطئه بوضوح"], evidence: ["Ghost Orb", "Ghost Writing", "Freezing"] },
-            { name: "Shade", info: ["لن يصطاد إلا إذا كنت بعيدًا عنه", "لا يفعل أحداث في نفس الغرفة", "قد يحرق كروسفكسين بنفس المكان", "شبح هادئ جدًا", "عند اشعال دائرة الاستدعاء يمكنه ان يظهر كظل"], evidence: ["EMF 5", "Ghost Writing", "Freezing"] },
-            { name: "Demon", info: ["وقت الكروسفكس بعد السِمج: 1:00", "يصطاد مبكرًا جدًا", "عدواني بشكل ملحوظ"], evidence: ["Fingerprints", "Ghost Writing", "Freezing"] },
-            { name: "Yurei", info: ["يغلق الأبواب بقوة", "يقلل 15% من العقل عند الإغلاق", "يمكنه فتح بابين بنفس الوقت", "السِمج يقيده في غرفته"], evidence: ["Ghost Orb", "Freezing", "DOTS"] },
-            { name: "Oni", info: ["يظهر كثيرًا ونادرًا ما يختفي", "أحداثه قوية وواضحة", "لا يفعل أحداث هوائية"], evidence: ["EMF 5", "Freezing", "DOTS"] },
-            { name: "Yokai", info: ["يصبح عدوانيًا عند التحدث بقربه", "سمعه ضعيف أثناء الصيد"], evidence: ["Spirit Box", "Ghost Orb", "DOTS"] },
-            { name: "Hantu", info: ["سريع جدًا في الأماكن الباردة", "بطيء في الأماكن الدافئة", "يمكن رؤية أنفاسه في الصيد", "لا يمكنه فتح مفتاح الضوء الرئيسي"], evidence: ["Fingerprints", "Ghost Orb", "Freezing"] },
-            { name: "Goryo", info: ["لا يغير غرفته أبدًا", "DOTS يظهر فقط بالكاميرا", "ممتاز للاستبعاد", "لا يمكنك ابدا معرفته الا باستبعاد باقي الاشباح"], evidence: ["EMF 5", "Fingerprints", "DOTS"] },
-            { name: "Myling", info: ["خطواته لا تُسمع إلا عند قرب شديد", "إذا انطفأ الكشاف قبل سماع الخطوات → غالبًا Myling"], evidence: ["EMF 5", "Fingerprints", "Ghost Writing"] },
-            { name: "Onryo", info: ["الشموع تحمي من الصيد", "إذا انطفأت 3 شمعات متتالية → يمكنه الصيد", "يتجاهل الكروسفكس بوجود الشموع"], evidence: ["Spirit Box", "Ghost Orb", "Freezing"] },
-            { name: "The Twins", info: ["قارن بين صيدين (سريع وبطيء)", "نشاط مزدوج في أماكن مختلفة"], evidence: ["EMF 5", "Spirit Box", "Freezing"] },
-            { name: "Raiju", info: ["يصبح أسرع قرب الأجهزة الإلكترونية", "إذا فتحت كشافك وازداد تسارعه → Raiju"], evidence: ["EMF 5", "Ghost Orb", "DOTS"] },
-            { name: "Obake", info: ["يغير شكله أثناء الصيد", "بصماته تختفي بسرعة", "بصمة 6 أصابع أحياناً"], evidence: ["EMF 5", "Fingerprints", "Ghost Orb"] },
-            { name: "The Mimic", info: ["لديه Ghost Orbs دائمًا (ليست دليلاً حقيقياً)", "يقلد سلوك أشباح أخرى"], evidence: ["Spirit Box", "Fingerprints", "Freezing"] },
-            { name: "Moroi", info: ["سرعته تعتمد على العقل (عقل منخفض = سريع جداً)", "إذا رآك تزداد سرعته أكثر"], evidence: ["Spirit Box", "Ghost Writing", "Freezing"] },
-            { name: "Deogen", info: ["سريع جداً بعيداً وبطيء جداً عند الاقتراب", "لا يمكن الاختباء منه", "النجاة بالدوران حول طاولة أو جسم"], evidence: ["Spirit Box", "Ghost Writing", "DOTS"] },
-            { name: "Thaye", info: ["أول صيد: سريع جداً", "كلما طال الوقت يصبح أبطأ", "إذا بقيت في مجال رؤيته أثناء الصيد يزداد نشاطه"], evidence: ["Ghost Orb", "Ghost Writing", "DOTS"] },
-            { name: "Obambo", info: ["يتفاعل بقوة مع الدمى (Dolls / Teddy)", "إذا وُجدت دمية في غرفته تزداد الأحداث", "أثناء الصيد يغيّر اتجاهه فجأة", "صوته متقطع في الـ Parabolic"], evidence: ["EMF 5", "Ghost Writing", "DOTS"] },
-            { name: "Dayan", info: ["يعتمد على الضوء", "إذا كانت الأنوار مشغلة يصبح أبطأ", "في الظلام يسرع ويصطاد مبكرًا", "يطفئ الشموع فورًا"], evidence: ["EMF 5", "Fingerprints", "Freezing"] },
-            { name: "Gallu", info: ["يتغذى على الخوف", "كل Ghost Event يقلل العقل أكثر من الطبيعي", "أثناء الصيد يصبح أسرع كلما نظرت إليه", "تجاهله يقلل عدوانيته"], evidence: ["Fingerprints", "Ghost Writing", "DOTS"] }
+            { 
+                name: "Spirit", 
+                infoAr: ["وقت الكروسفكس بعد استخدام السِمج: 3:10", "شبح متوازن بدون سلوك فريد أثناء الصيد"],
+                infoEn: ["Smudge stick duration: 3 minutes 10 seconds", "Standard movement speed, no unique hunting traits"],
+                evidence: ["EMF 5", "Spirit Box", "Ghost Writing"] 
+            },
+            { 
+                name: "Wraith", 
+                infoAr: ["لا يترك آثار أقدام بالملح", "يمكنه التنقل مباشرة إلى اللاعب", "يتأذى بقوة من السِمج"],
+                infoEn: ["Never leaves footsteps in salt", "Can teleport to player's location", "Vulnerable to Smudge Sticks"],
+                evidence: ["EMF 5", "Spirit Box", "DOTS"] 
+            },
+            { 
+                name: "Phantom", 
+                infoAr: ["لا يظهر بوضوح في الصور", "يختفي كثيرًا أثناء الصيد", "النظر له يقلل العقل بسرعة"],
+                infoEn: ["Invisible in photos", "Blinks slowly during hunts (stays invisible longer)", "Looking at it drains sanity rapidly"],
+                evidence: ["Spirit Box", "Fingerprints", "DOTS"] 
+            },
+            { 
+                name: "Poltergeist", 
+                infoAr: ["يرمي عدة أشياء دفعة واحدة", "أثناء الصيد يرمي الأشياء لمسافات بعيدة", "تفريغ الغرفة من الأغراض يضعفه"],
+                infoEn: ["Throws multiple objects at once", "Throws items frequently and further during hunts", "Empty rooms with no objects weaken its ability"],
+                evidence: ["Spirit Box", "Fingerprints", "Ghost Writing"] 
+            },
+            { 
+                name: "Banshee", 
+                infoAr: ["صرخة فريدة في Parabolic Mic", "غالبًا يغني في الـ Ghost Events", "يستهدف لاعبًا واحدًا فقط"],
+                infoEn: ["Unique scream through Parabolic Microphone", "More likely to perform singing ghost events", "Targets one specific player (stays fixed until they die)"],
+                evidence: ["Fingerprints", "Ghost Orb", "DOTS"] 
+            },
+            { 
+                name: "Jinn", 
+                infoAr: ["سريع جداً إذا رآك والكهرباء مشغلة", "لا يطفئ الكهرباء", "يفقد سرعته عند الاقتراب"],
+                infoEn: ["Moves faster with fuse box ON and line-of-sight", "Will never turn off the fuse box", "Loses speed when close to player"],
+                evidence: ["EMF 5", "Fingerprints", "Freezing"] 
+            },
+            { 
+                name: "Mare", 
+                infoAr: ["لا يشغل أي ضوء", "يطفئ الإضاءة فور تشغيلها", "يفضل الظلام ويصطاد مبكرًا فيه"],
+                infoEn: ["Cannot turn lights ON", "Instantly turns off lights switched on by player", "Hunts earlier in the dark"],
+                evidence: ["Spirit Box", "Ghost Orb", "Ghost Writing"] 
+            },
+            { 
+                name: "Revenant", 
+                infoAr: ["سرعته بطيئة جداً إذا لم يراك (≈1)", "يصبح سريعاً جداً عند رؤيتك (≈3)"],
+                infoEn: ["Extremely slow (1.1m/s) when player is hidden", "Extremely fast (3m/s) when player is in line-of-sight"],
+                evidence: ["Ghost Orb", "Ghost Writing", "Freezing"] 
+            },
+            { 
+                name: "Shade", 
+                infoAr: ["لن يصطاد بوجود لاعبين في نفس الغرفة", "شبح خجول جداً"],
+                infoEn: ["Will not hunt if players are in the same room", "Very shy; less likely to perform events"],
+                evidence: ["EMF 5", "Ghost Writing", "Freezing"] 
+            },
+            { 
+                name: "Demon", 
+                infoAr: ["يصطاد مبكراً جداً", "وقت السِمج ضده دقيقة واحدة فقط", "عدواني للغاية"],
+                infoEn: ["Can hunt at any sanity (special ability)", "Smudge sticks only stop it for 60 seconds", "Most aggressive ghost"],
+                evidence: ["Fingerprints", "Ghost Writing", "Freezing"] 
+            },
+            { 
+                name: "Yurei", 
+                infoAr: ["يغلق الأبواب بقوة لخفض العقل", "السِمج يقيده في غرفته لمدة 90 ثانية"],
+                infoEn: ["Powerful door slams drain sanity (15%)", "Smudging it keeps it in its room for 90s"],
+                evidence: ["Ghost Orb", "Freezing", "DOTS"] 
+            },
+            { 
+                name: "Oni", 
+                infoAr: ["يظهر بكامل هيئته كثيراً", "أحداثه قوية وواضحة"],
+                infoEn: ["Visible for longer durations during events", "Never does the air-ball ghost event"],
+                evidence: ["EMF 5", "Freezing", "DOTS"] 
+            },
+            { 
+                name: "Yokai", 
+                infoAr: ["يصطاد مبكراً عند التحدث بقربه", "سمعه ضعيف أثناء الصيد"],
+                infoEn: ["Can hunt early (80% sanity) if you talk near it", "Can only hear players within 2.5 meters during hunt"],
+                evidence: ["Spirit Box", "Ghost Orb", "DOTS"] 
+            },
+            { 
+                name: "Hantu", 
+                infoAr: ["سريع جداً في الأماكن الباردة", "أنفاس ظاهرة في الصيد"],
+                infoEn: ["Faster in colder rooms, slower in warm rooms", "Freezing breath visible during hunts if fuse box is OFF"],
+                evidence: ["Fingerprints", "Ghost Orb", "Freezing"] 
+            }
         ];
 
+        let currentLang = 'ar';
         let included = [];
         let excluded = [];
 
-        function showTab(id, btn) {
-            document.querySelectorAll('.content-section').forEach(s => s.classList.remove('active'));
-            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-            document.getElementById(id).classList.add('active');
-            btn.classList.add('active');
+        function changeLang(lang) {
+            currentLang = lang;
+            const html = document.getElementById('main-html');
+            const t = translations[lang];
+            
+            html.dir = (lang === 'ar') ? 'rtl' : 'ltr';
+            document.getElementById('brand-name').innerText = t.brand;
+            document.getElementById('nav-ev').innerText = t.navEv;
+            document.getElementById('nav-hunt').innerText = t.navHunt;
+            document.getElementById('nav-list').innerText = t.navList;
+            document.getElementById('nav-reset').innerText = t.navReset;
+            document.getElementById('ev-title').innerText = t.evTitle;
+            document.getElementById('hunt-title').innerText = t.huntTitle;
+            document.getElementById('hunt-search').placeholder = t.huntPlaceholder;
+            document.getElementById('list-placeholder').innerText = t.listPlaceholder;
+
+            document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById('lang-' + lang).classList.add('active');
+            
+            updateEvidenceFilter();
+            initGhostList();
         }
 
-        // تحويل المصفوفة إلى قائمة HTML مرقمة
         function formatInfo(infoArr) {
             return `<ul class="info-list">` + 
                 infoArr.map((item, index) => `<li>${index + 1} - ${item}</li>`).join('') + 
                 `</ul>`;
         }
-
-        document.querySelectorAll('.evidence-btn').forEach(btn => {
-            btn.onclick = () => {
-                const val = btn.getAttribute('data-val');
-                if (!btn.classList.contains('included') && !btn.classList.contains('excluded')) {
-                    btn.classList.add('included');
-                    included.push(val);
-                } else if (btn.classList.contains('included')) {
-                    btn.classList.remove('included');
-                    btn.classList.add('excluded');
-                    included = included.filter(i => i !== val);
-                    excluded.push(val);
-                } else {
-                    btn.classList.remove('excluded');
-                    excluded = excluded.filter(i => i !== val);
-                }
-                updateEvidenceFilter();
-            };
-        });
 
         function updateEvidenceFilter() {
             const filtered = ghosts.filter(g => 
@@ -225,10 +314,68 @@
             document.getElementById('evidence-results').innerHTML = filtered.map(g => `
                 <div class="ghost-card">
                     <h2 style="color:var(--accent-color); margin-bottom:5px;">${g.name}</h2>
-                    ${formatInfo(g.info)}
+                    ${formatInfo(currentLang === 'ar' ? g.infoAr : g.infoEn)}
                     ${g.evidence.map(e => `<span class="tag">${e}</span>`).join('')}
                 </div>
             `).join('');
+        }
+
+        function searchByHunt() {
+            const q = document.getElementById('hunt-search').value.toLowerCase();
+            const res = ghosts.filter(g => {
+                const info = (currentLang === 'ar' ? g.infoAr : g.infoEn).join(" ").toLowerCase();
+                return info.includes(q) || g.name.toLowerCase().includes(q);
+            });
+            document.getElementById('hunt-results').innerHTML = res.map(g => `
+                <div class="ghost-card">
+                    <h2 style="color:var(--accent-color)">${g.name}</h2>
+                    ${formatInfo(currentLang === 'ar' ? g.infoAr : g.infoEn)}
+                </div>
+            `).join('');
+        }
+
+        function initGhostList() {
+            const list = document.getElementById('ghost-names-list');
+            list.innerHTML = '';
+            ghosts.forEach(g => {
+                const div = document.createElement('div');
+                div.className = 'ghost-list-item';
+                div.innerText = g.name;
+                div.onclick = () => {
+                    document.querySelectorAll('.ghost-list-item').forEach(i => i.classList.remove('selected'));
+                    div.classList.add('selected');
+                    document.getElementById('ghost-details-panel').innerHTML = `
+                        <h1 style="color:var(--accent-color)">${g.name}</h1>
+                        <hr style="border:0; border-top:1px solid #444; margin-bottom:20px;">
+                        ${formatInfo(currentLang === 'ar' ? g.infoAr : g.infoEn)}
+                        <div style="margin-top:20px"><strong>${translations[currentLang].officialEv}</strong><br>
+                        ${g.evidence.map(e => `<span class="tag">${e}</span>`).join('')}</div>
+                    `;
+                };
+                list.appendChild(div);
+            });
+        }
+
+        document.querySelectorAll('.evidence-btn').forEach(btn => {
+            btn.onclick = () => {
+                const val = btn.getAttribute('data-val');
+                if (!btn.classList.contains('included') && !btn.classList.contains('excluded')) {
+                    btn.classList.add('included'); included.push(val);
+                } else if (btn.classList.contains('included')) {
+                    btn.classList.remove('included'); btn.classList.add('excluded');
+                    included = included.filter(i => i !== val); excluded.push(val);
+                } else {
+                    btn.classList.remove('excluded'); excluded = excluded.filter(i => i !== val);
+                }
+                updateEvidenceFilter();
+            };
+        });
+
+        function showTab(id, btn) {
+            document.querySelectorAll('.content-section').forEach(s => s.classList.remove('active'));
+            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+            btn.classList.add('active');
         }
 
         function resetEvidence() {
@@ -237,37 +384,7 @@
             updateEvidenceFilter();
         }
 
-        function searchByHunt() {
-            const q = document.getElementById('hunt-search').value.toLowerCase();
-            const res = ghosts.filter(g => g.info.some(line => line.toLowerCase().includes(q)) || g.name.toLowerCase().includes(q));
-            document.getElementById('hunt-results').innerHTML = res.map(g => `
-                <div class="ghost-card">
-                    <h2 style="color:var(--accent-color)">${g.name}</h2>
-                    ${formatInfo(g.info)}
-                </div>
-            `).join('');
-        }
-
-        const namesList = document.getElementById('ghost-names-list');
-        ghosts.forEach(g => {
-            const div = document.createElement('div');
-            div.className = 'ghost-list-item';
-            div.innerText = g.name;
-            div.onclick = () => {
-                document.querySelectorAll('.ghost-list-item').forEach(i => i.classList.remove('selected'));
-                div.classList.add('selected');
-                document.getElementById('ghost-details-panel').innerHTML = `
-                    <h1 style="color:var(--accent-color)">${g.name}</h1>
-                    <hr style="border:0; border-top:1px solid #444; margin-bottom:20px;">
-                    ${formatInfo(g.info)}
-                    <div style="margin-top:20px"><strong>الأدلة الرسمية:</strong><br>
-                    ${g.evidence.map(e => `<span class="tag">${e}</span>`).join('')}</div>
-                `;
-            };
-            namesList.appendChild(div);
-        });
+        initGhostList();
     </script>
 </body>
-
 </html>
-
