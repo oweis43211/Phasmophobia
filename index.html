@@ -193,23 +193,35 @@
             }
         };
 
-        const ghosts = [
-            { name: "Spirit", infoAr: ["وقت الكروسفكس بعد استخدام السِمج: 3:10", "بدون سلوك فريد"], infoEn: ["Smudge duration: 3:10", "No unique speed traits"], evidence: ["EMF 5", "Spirit Box", "Ghost Writing"] },
-            { name: "Wraith", infoAr: ["لا يترك أقدام بالملح", "ينتقل للاعب"], infoEn: ["No salt footprints", "Teleports to player"], evidence: ["EMF 5", "Spirit Box", "DOTS"] },
-            { name: "Phantom", infoAr: ["يختفي في الصور", "سرعة وميض بطيئة"], infoEn: ["Invisible in photos", "Slow blinking during hunt"], evidence: ["Spirit Box", "Fingerprints", "DOTS"] },
-            { name: "Poltergeist", infoAr: ["رمي أشياء متعددة", "قوي في الصيد"], infoEn: ["Multi-throw", "Strong throwing during hunt"], evidence: ["Spirit Box", "Fingerprints", "Ghost Writing"] },
-            { name: "Banshee", infoAr: ["صرخة Parabolic", "يستهدف لاعب واحد"], infoEn: ["Parabolic Mic scream", "Targets one player"], evidence: ["Fingerprints", "Ghost Orb", "DOTS"] },
-            { name: "Jinn", infoAr: ["سريع مع الكهرباء", "لا يطفئ الكهرباء"], infoEn: ["Fast if fuse box ON", "Never turns off fuse box"], evidence: ["EMF 5", "Fingerprints", "Freezing"] },
-            { name: "Mare", infoAr: ["يصطاد في الظلام", "يطفئ الضوء فوراً"], infoEn: ["Hunts in dark", "Instantly turns off lights"], evidence: ["Spirit Box", "Ghost Orb", "Ghost Writing"] },
-            { name: "Revenant", infoAr: ["سريع جداً عند الرؤية", "بطيء عند الاختباء"], infoEn: ["Fast in LOS", "Very slow if hidden"], evidence: ["Ghost Orb", "Ghost Writing", "Freezing"] },
-            { name: "Shade", infoAr: ["خجول", "لا يصطاد بوجود لاعبين"], infoEn: ["Shy ghost", "Won't hunt with players in room"], evidence: ["EMF 5", "Ghost Writing", "Freezing"] },
-            { name: "Demon", infoAr: ["يصطاد في أي وقت", "سِمج 60 ثانية"], infoEn: ["Any sanity hunt", "Smudge lasts 60s"], evidence: ["Fingerprints", "Ghost Writing", "Freezing"] },
-            { name: "Yurei", infoAr: ["يخسف العقل بالأبواب", "سِمج يحبسه"], infoEn: ["Door slams drain sanity", "Smudge traps in room"], evidence: ["Ghost Orb", "Freezing", "DOTS"] },
-            { name: "Oni", infoAr: ["نشيط جداً", "لا يظهر دخان الهواء"], infoEn: ["Very active", "No air ball event"], evidence: ["EMF 5", "Freezing", "DOTS"] },
-            { name: "Yokai", infoAr: ["يصطاد عند الكلام", "سمع محدود"], infoEn: ["Hunts if you talk", "Limited hearing range"], evidence: ["Spirit Box", "Ghost Orb", "DOTS"] },
-            { name: "Hantu", infoAr: ["سريع في البرد", "أنفاس ظاهرة"], infoEn: ["Fast in cold", "Freezing breath in hunt"], evidence: ["Fingerprints", "Ghost Orb", "Freezing"] }
+const ghosts = [
+            { name: "Spirit", infoAr: ["وقت الكروسفكس بعد استخدام السِمج: 3:10", "شبح متوازن بدون سلوك فريد أثناء الصيد"], evidence: ["EMF 5", "Spirit Box", "Ghost Writing"] },
+            { name: "Wraith", infoAr: ["لا يترك آثار أقدام بالملح", "يمكنه التنقل مباشرة إلى اللاعب", "يتأذى بقوة من السِمج"], evidence: ["EMF 5", "Spirit Box", "DOTS"] },
+            { name: "Phantom", infoAr: ["لا يظهر بوضوح في الصور", "يختفي كثيرًا أثناء الصيد", "النظر له يقلل العقل بسرعة"], evidence: ["Spirit Box", "Fingerprints", "DOTS"] },
+            { name: "Poltergeist", infoAr: ["إذا رمى عدة أشياء دفعة واحدة فهو بولتر", "أثناء الصيد يرمي الأشياء لمسافات بعيدة جدًا", "تفريغ الغرفة من الأغراض يضعفه"], evidence: ["Spirit Box", "Fingerprints", "Ghost Writing"] },
+            { name: "Banshee", infoAr: ["صرخة فريدة في Parabolic Mic", "غالبًا يغني في الـ Ghost Events", "يستهدف لاعبًا واحدًا فقط"], evidence: ["Fingerprints", "Ghost Orb", "DOTS"] },
+            { name: "Jinn", infoAr: ["سرعته عادية", "إذا رآك من بعيد يصبح سريعًا جدًا", "إذا اقترب منك يعود للسرعة الطبيعية", "لا يستطيع استخدام قدرته بدون كهرباء"], evidence: ["EMF 5", "Fingerprints", "Freezing"] },
+            { name: "Mare", infoAr: ["لا يشغل أي ضوء", "يطفئ الإضاءة فور تشغيلها", "يفضل الظلام ويصطاد مبكرًا فيه"], evidence: ["Spirit Box", "Ghost Orb", "Ghost Writing"] },
+            { name: "Revenant", infoAr: ["سرعته بطيئة جدًا إذا لم يراك (≈1)", "يصبح سريعًا جدًا عند رؤيتك (≈3)", "السِمج يبطئه بوضوح"], evidence: ["Ghost Orb", "Ghost Writing", "Freezing"] },
+            { name: "Shade", infoAr: ["لن يصطاد إلا إذا كنت بعيدًا عنه", "لا يفعل أحداث في نفس الغرفة", "قد يحرق كروسفكسين بنفس المكان", "شبح هادئ جدًا", "عند اشعال دائرة الاستدعاء يمكنه ان يظهر كظل"], evidence: ["EMF 5", "Ghost Writing", "Freezing"] },
+            { name: "Demon", infoAr: ["وقت الكروسفكس بعد السِمج: 1:00", "يصطاد مبكرًا جدًا", "عدواني بشكل ملحوظ"], evidence: ["Fingerprints", "Ghost Writing", "Freezing"] },
+            { name: "Yurei", infoAr: ["يغلق الأبواب بقوة", "يقلل 15% من العقل عند الإغلاق", "يمكنه فتح بابين بنفس الوقت", "السِمج يقيده في غرفته"], evidence: ["Ghost Orb", "Freezing", "DOTS"] },
+            { name: "Oni", infoAr: ["يظهر كثيرًا ونادرًا ما يختفي", "أحداثه قوية وواضحة", "لا يفعل أحداث هوائية"], evidence: ["EMF 5", "Freezing", "DOTS"] },
+            { name: "Yokai", infoAr: ["يصبح عدوانيًا عند التحدث بقربه", "سمعه ضعيف أثناء الصيد"], evidence: ["Spirit Box", "Ghost Orb", "DOTS"] },
+            { name: "Hantu", infoAr: ["سريع جدًا في الأماكن الباردة", "بطيء في الأماكن الدافئة", "يمكن رؤية أنفاسه في الصيد", "لا يمكنه فتح مفتاح الضوء الرئيسي"], evidence: ["Fingerprints", "Ghost Orb", "Freezing"] },
+            { name: "Goryo", infoAr: ["لا يغير غرفته أبدًا", "DOTS يظهر فقط بالكاميرا", "ممتاز للاستبعاد", "لا يمكنك ابدا معرفته الا باستبعاد باقي الاشباح"], evidence: ["EMF 5", "Fingerprints", "DOTS"] },
+            { name: "Myling", infoAr: ["خطواته لا تُسمع إلا عند قرب شديد", "إذا انطفأ الكشاف قبل سماع الخطوات → غالبًا Myling"], evidence: ["EMF 5", "Fingerprints", "Ghost Writing"] },
+            { name: "Onryo", infoAr: ["الشموع تحمي من الصيد", "إذا انطفأت 3 شمعات متتالية → يمكنه الصيد", "يتجاهل الكروسفكس بوجود الشموع"], evidence: ["Spirit Box", "Ghost Orb", "Freezing"] },
+            { name: "The Twins", infoAr: ["قارن بين صيدين (واحد سريع وواحد بطيء)", "نشاط مزدوج في أماكن مختلفة"], evidence: ["EMF 5", "Spirit Box", "Freezing"] },
+            { name: "Raiju", infoAr: ["يصبح أسرع قرب الأجهزة الإلكترونية", "إذا فتحت كشافك وازداد تسارعه → Raiju"], evidence: ["EMF 5", "Ghost Orb", "DOTS"] },
+            { name: "Obake", infoAr: ["يغير شكله أثناء الصيد", "بصماته تختفي بسرعة", "بصمة 6 أصابع أحيانًا"], evidence: ["EMF 5", "Fingerprints", "Ghost Orb"] },
+            { name: "The Mimic", infoAr: ["لديه Ghost Orbs دائمًا (دليل رابع مزيف)", "يقلد سلوك أشباح أخرى"], evidence: ["Spirit Box", "Fingerprints", "Freezing"] },
+            { name: "Moroi", infoAr: ["سرعته تعتمد على العقل (عقل منخفض = سريع جداً)", "إذا رآك تزداد سرعته أكثر"], evidence: ["Spirit Box", "Ghost Writing", "Freezing"] },
+            { name: "Deogen", infoAr: ["سريع جدًا عندما يكون بعيدًا", "يبطئ جدًا عند الاقتراب", "لا يمكن الاختباء منه (اهرب منه بالدوران)"], evidence: ["Spirit Box", "Ghost Writing", "DOTS"] },
+            { name: "Thaye", infoAr: ["أول صيد: سريع جدًا", "كلما طال الوقت يصبح أبطأ", "يزداد نشاطه إذا بقيت في غرفته"], evidence: ["Ghost Writing", "Ghost Orb", "DOTS"] },
+            { name: "Obambo", infoAr: ["يتفاعل بقوة مع الدمى (Dolls / Teddy)", "أثناء الصيد يغيّر اتجاهه فجأة", "صوته متقطع في الـ Parabolic"], evidence: ["EMF 5", "Fingerprints", "Ghost Writing"] },
+            { name: "Dayan", infoAr: ["يعتمد على الضوء (أبطأ في النور)", "في الظلام يسرع ويصطاد مبكرًا", "يطفئ الشموع فورًا"], evidence: ["Spirit Box", "Ghost Orb", "Freezing"] },
+            { name: "Gallu", infoAr: ["يتغذى على الخوف (Ghost Events تنقص عقل أكثر)", "يصبح أسرع كلما نظرت إليه", "تجاهله يقلل عدوانيته"], evidence: ["EMF 5", "Freezing", "DOTS"] }
         ];
-
         // مصفوفة الخرائط - تسحب الصور من مجلد maps محلي
         const mapsData = [
             {
