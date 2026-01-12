@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl" id="main-html">
+<html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,466 +7,203 @@
     <style>
         :root {
             --bg-color: #0a0a0a;
-            --sidebar-color: #151515;
+            --sidebar-color: #121212;
             --card-bg: #1e1e1e;
             --accent-color: #ff4444; 
-            --exclude-color: #721c24;
-            --include-color: #155724;
-            --text-color: #ffffff;
-            --secondary-text: #aaaaaa;
+            --include-color: #28a745;
+            --exclude-color: #dc3545;
+            --text-color: #f0f0f0;
+            --border-color: #333;
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Segoe UI', Tahoma, sans-serif;
             background-color: var(--bg-color);
             color: var(--text-color);
             margin: 0;
             display: flex;
-            flex-direction: column;
             height: 100vh;
             overflow: hidden;
         }
 
-        #app-container { display: flex; flex-grow: 1; overflow: hidden; }
-
         #sidebar {
-            width: 250px;
+            width: 260px;
             background-color: var(--sidebar-color);
             display: flex;
             flex-direction: column;
             padding: 20px;
-            border-inline-end: 2px solid #222;
+            border-inline-end: 2px solid var(--border-color);
         }
 
         .nav-btn {
             background: #222;
-            color: var(--secondary-text);
-            border: 1px solid #333;
-            padding: 15px;
+            color: #aaa;
+            border: 1px solid var(--border-color);
+            padding: 14px;
             margin-bottom: 10px;
             cursor: pointer;
             border-radius: 8px;
-            font-size: 1rem;
+            text-align: right;
             transition: 0.3s;
-            text-align: inherit;
+            font-weight: bold;
         }
 
-        .nav-btn.active { background: var(--accent-color); color: white; font-weight: bold; }
+        .nav-btn.active { background: var(--accent-color); color: white; }
 
-        #main-view { flex-grow: 1; padding: 30px; overflow-y: auto; }
-        .content-section { display: none; width: 100%; max-width: 1000px; margin: 0 auto; }
-        .content-section.active { display: block; animation: fadeIn 0.3s; }
+        #main-view { flex-grow: 1; padding: 25px; overflow-y: auto; }
+        .content-section { display: none; max-width: 1100px; margin: 0 auto; }
+        .content-section.active { display: block; animation: fadeIn 0.3s ease; }
 
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-        .evidence-grid { 
-            display: grid; 
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); 
-            gap: 12px; 
-            margin-bottom: 20px;
-        }
+        .list-container { display: flex; gap: 20px; height: 85vh; }
+        .side-column { width: 320px; overflow-y: auto; background: #111; padding: 15px; border-radius: 10px; border: 1px solid var(--border-color); }
+        .details-column { flex-grow: 1; background: var(--card-bg); padding: 25px; border-radius: 10px; overflow-y: auto; border: 1px solid var(--border-color); }
 
-        .evidence-btn {
-            padding: 15px; background: #252525; border: 1px solid #444; border-radius: 8px;
-            cursor: pointer; text-align: center; color: #fff; user-select: none;
-        }
+        .search-box { width: 100%; padding: 12px; background: #000; border: 1px solid var(--border-color); color: white; border-radius: 8px; margin-bottom: 15px; box-sizing: border-box; font-size: 1rem; }
+        .list-item { padding: 12px; margin-bottom: 6px; border-radius: 6px; cursor: pointer; background: #222; color: #ccc; transition: 0.2s; }
+        .list-item.selected { background: #441111; border-inline-start: 4px solid var(--accent-color); color: white; }
 
-        .evidence-btn.included { background: var(--include-color); border-color: #28a745; }
-        .evidence-btn.excluded { background: var(--exclude-color); border-color: #dc3545; text-decoration: line-through; opacity: 0.7; }
+        .tag { display: inline-block; background: #333; color: #ddd; padding: 4px 10px; border-radius: 15px; font-size: 0.8rem; margin: 3px; }
+        .speed-tag { background: #113344; color: #88ccff; font-weight: bold; }
+        .evidence-tag { background: #155724; color: #d4edda; }
 
-        .info-list { list-style: none; padding: 0; margin: 15px 0; }
-        .info-list li {
-            background: #2a2a2a; margin-bottom: 8px; padding: 12px; border-radius: 5px;
-            border-inline-start: 3px solid var(--accent-color); line-height: 1.5;
-        }
+        .evidence-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 10px; margin-bottom: 20px; }
+        .ev-btn { padding: 12px; background: #252525; border: 1px solid #444; border-radius: 6px; cursor: pointer; text-align: center; font-weight: bold; }
+        .ev-btn.included { background: var(--include-color); }
+        .ev-btn.excluded { background: var(--exclude-color); text-decoration: line-through; opacity: 0.5; }
 
-        .list-container { display: flex; gap: 20px; height: 75vh; }
-        .side-column { width: 250px; overflow-y: auto; background: #151515; padding: 10px; border-radius: 10px; }
-        .details-column { flex-grow: 1; background: var(--card-bg); padding: 30px; border-radius: 10px; border: 1px solid #333; overflow-y: auto;}
-
-        .list-item { padding: 12px; margin-bottom: 5px; border-radius: 6px; cursor: pointer; transition: 0.2s; }
-        .list-item:hover { background: #222; }
-        .list-item.selected { background: #331111; border-inline-start: 4px solid var(--accent-color); }
-
-        .ghost-card { background: #252525; padding: 20px; margin-top: 15px; border-radius: 8px; border-bottom: 2px solid #444; }
-        .tag { display: inline-block; background: #441111; color: #ff8888; padding: 5px 12px; border-radius: 15px; font-size: 0.8rem; margin-inline-end: 5px; margin-top: 10px; }
-        .search-box { width: 100%; padding: 12px; background: #151515; border: 1px solid #333; color: white; border-radius: 8px; margin-bottom: 15px; }
-
-        /* Map UI */
-        .map-display {
-            width: 100%;
-            background: #111;
-            border-radius: 10px;
-            margin-bottom: 20px;
-            border: 1px solid #333;
-            overflow: hidden;
-        }
-
-        .map-display img {
-            width: 100%;
-            display: block;
-            height: auto;
-            max-height: 500px;
-            object-fit: contain;
-        }
-
-        #lang-selector {
-            background: #111; padding: 10px; display: flex; justify-content: center; gap: 20px; border-top: 1px solid #333;
-        }
-        .lang-btn { color: var(--secondary-text); cursor: pointer; font-size: 0.9rem; text-decoration: none; }
-        .lang-btn.active { color: white; font-weight: bold; border-bottom: 2px solid var(--accent-color); }
+        .tarot-card { background: #1a1a1a; border-radius: 10px; padding: 15px; text-align: center; border: 1px solid #333; }
+        .tarot-card img { width: 90px; height: 140px; margin-bottom: 10px; border-radius: 4px; }
+        
+        .map-img { width: 100%; max-height: 400px; object-fit: contain; border-radius: 8px; margin-bottom: 20px; border: 1px solid #444; background: #000; }
+        
+        .info-list { list-style: none; padding: 0; }
+        .info-list li { background: #2a2a2a; margin-bottom: 8px; padding: 12px; border-radius: 6px; border-inline-start: 4px solid var(--accent-color); line-height: 1.6; }
+        
+        .result-card { background:#1a1a1a; padding:20px; margin-top:15px; border-radius:10px; border-inline-start: 5px solid var(--accent-color); position: relative; }
     </style>
 </head>
 <body>
 
-    <div id="app-container">
-        <div id="sidebar">
-            <h2 id="brand-name" style="color: var(--accent-color); text-align: center;">PHASMO PRO</h2>
-            <button id="nav-ev" class="nav-btn active" onclick="showTab('evidence-tab', this)">🔍 الأدلة</button>
-            <button id="nav-hunt" class="nav-btn" onclick="showTab('hunt-tab', this)">🏹 سلوك الصيد</button>
-            <button id="nav-list" class="nav-btn" onclick="showTab('list-tab', this)">📜 قائمة الوحوش</button>
-            <button id="nav-maps" class="nav-btn" onclick="showTab('maps-tab', this)">🗺️ الخرائط والأدوات</button>
-            <button id="nav-reset" class="nav-btn" onclick="resetEvidence()" style="margin-top:auto; font-size: 0.8rem; background: #444;">إعادة ضبط الأدلة</button>
-        </div>
-
-        <div id="main-view">
-            <div id="evidence-tab" class="content-section active">
-                <h2 id="ev-title">تحديد الشبح</h2>
-                <div class="evidence-grid" id="evidence-container">
-                    <div class="evidence-btn" data-val="EMF 5">EMF Level 5</div>
-                    <div class="evidence-btn" data-val="Fingerprints">Ultraviolet</div>
-                    <div class="evidence-btn" data-val="Ghost Writing">Ghost Writing</div>
-                    <div class="evidence-btn" data-val="Freezing">Freezing Temperatures</div>
-                    <div class="evidence-btn" data-val="Ghost Orb">Ghost Orbs</div>
-                    <div class="evidence-btn" data-val="Spirit Box">Spirit Box</div>
-                    <div class="evidence-btn" data-val="DOTS">DOTS Projector</div>
-                </div>
-                <div id="evidence-results"></div>
-            </div>
-
-            <div id="hunt-tab" class="content-section">
-                <h2 id="hunt-title">البحث بسلوك الصيد</h2>
-                <input type="text" class="search-box" id="hunt-search" placeholder="ابحث عن ميزة معينة..." onkeyup="searchByHunt()">
-                <div id="hunt-results"></div>
-            </div>
-
-            <div id="list-tab" class="content-section">
-                <div class="list-container">
-                    <div class="side-column" id="ghost-names-list"></div>
-                    <div class="details-column" id="ghost-details-panel">
-                        <h3 id="list-placeholder">اختر شبحاً لعرض بياناته المرتبة</h3>
-                    </div>
-                </div>
-            </div>
-
-            <div id="maps-tab" class="content-section">
-                <div class="list-container">
-                    <div class="side-column" id="maps-list-column"></div>
-                    <div class="details-column" id="map-details-panel">
-                        <h3 id="map-placeholder">اختر خريطة لعرض تفاصيلها</h3>
-                    </div>
-                </div>
-            </div>
-        </div>
+    <div id="sidebar">
+        <h2 style="color: var(--accent-color); text-align: center; letter-spacing: 1px;">PHASMO ULTRA</h2>
+        <button class="nav-btn active" onclick="showTab('evidence-tab', this)">🔍 كاشف الأدلة الشامل</button>
+        <button class="nav-btn" onclick="showTab('ghosts-tab', this)">📜 موسوعة الأشباح</button>
+        <button class="nav-btn" onclick="showTab('cards-tab', this)">🃏 كروت التاروت</button>
+        <button class="nav-btn" onclick="showTab('maps-tab', this)">🗺️ مخططات الخرائط</button>
+        <button class="nav-btn" onclick="resetEvidence()" style="margin-top: auto; color: #ff8888;">إعادة ضبط الأدلة</button>
     </div>
 
-    <div id="lang-selector">
-        <span class="lang-btn active" onclick="changeLang('ar')" id="lang-ar">العربية</span>
-        <span class="lang-btn" onclick="changeLang('en')" id="lang-en">English</span>
+    <div id="main-view">
+        <div id="evidence-tab" class="content-section active">
+            <h2>محرك التحديد والتحليل</h2>
+            <div class="evidence-grid">
+                <div class="ev-btn" data-val="EMF 5">EMF 5</div>
+                <div class="ev-btn" data-val="Fingerprints">Ultraviolet</div>
+                <div class="ev-btn" data-val="Ghost Writing">Writing</div>
+                <div class="ev-btn" data-val="Freezing">Freezing</div>
+                <div class="ev-btn" data-val="Ghost Orb">Orbs</div>
+                <div class="ev-btn" data-val="Spirit Box">Spirit Box</div>
+                <div class="ev-btn" data-val="DOTS">DOTS</div>
+            </div>
+            <div id="evidence-results"></div>
+        </div>
+
+        <div id="ghosts-tab" class="content-section">
+            <div class="list-container">
+                <div class="side-column">
+                    <input type="text" class="search-box" id="global-search" placeholder="ابحث عن شبح، سرعة، أو قدرة..." onkeyup="renderGhostList(this.value)">
+                    <div id="ghost-list"></div>
+                </div>
+                <div id="ghost-details" class="details-column">اختر شبحاً لعرض الملف التقني...</div>
+            </div>
+        </div>
+
+        <div id="cards-tab" class="content-section">
+            <div class="cards-grid" id="cards-container" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 15px;"></div>
+        </div>
+
+        <div id="maps-tab" class="content-section">
+            <div class="list-container">
+                <div class="side-column" id="maps-list"></div>
+                <div id="map-details" class="details-column">اختر خريطة لعرض المخطط...</div>
+            </div>
+        </div>
     </div>
 
     <script>
-        const translations = {
-            ar: {
-                brand: "PHASMO PRO", navEv: "🔍 الأدلة", navHunt: "🏹 سلوك الصيد", navList: "📜 قائمة الوحوش", navMaps: "🗺️ الخرائط والأدوات",
-                navReset: "إعادة ضبط الأدلة", evTitle: "تحديد الشبح", huntTitle: "البحث بسلوك الصيد",
-                huntPlaceholder: "ابحث عن ميزة معينة...", listPlaceholder: "اختر شبحاً لعرض بياناته المرتبة", 
-                mapPlaceholder: "اختر خريطة لعرض تفاصيلها ومواقع الأدوات", officialEv: "الأدلة الرسمية:", 
-                cursedTitle: "أماكن الأدوات الملعونة (Cursed Items):"
-            },
-            en: {
-                brand: "PHASMO PRO", navEv: "🔍 Evidence", navHunt: "🏹 Hunt Behavior", navList: "📜 Ghost List", navMaps: "🗺️ Maps & Items",
-                navReset: "Reset Evidence", evTitle: "Identify Ghost", huntTitle: "Search Hunt Behavior",
-                huntPlaceholder: "Search for a specific trait...", listPlaceholder: "Select a ghost to view details", 
-                mapPlaceholder: "Select a map to view details and item locations", officialEv: "Official Evidence:",
-                cursedTitle: "Cursed Possession Locations:"
-            }
-        };
-
-const ghosts = [
-            { name: "Spirit", infoAr: ["وقت الكروسفكس بعد استخدام السِمج: 3:10", "شبح متوازن بدون سلوك فريد أثناء الصيد"], evidence: ["EMF 5", "Spirit Box", "Ghost Writing"] },
-            { name: "Wraith", infoAr: ["لا يترك آثار أقدام بالملح", "يمكنه التنقل مباشرة إلى اللاعب", "يتأذى بقوة من السِمج"], evidence: ["EMF 5", "Spirit Box", "DOTS"] },
-            { name: "Phantom", infoAr: ["لا يظهر بوضوح في الصور", "يختفي كثيرًا أثناء الصيد", "النظر له يقلل العقل بسرعة"], evidence: ["Spirit Box", "Fingerprints", "DOTS"] },
-            { name: "Poltergeist", infoAr: ["إذا رمى عدة أشياء دفعة واحدة فهو بولتر", "أثناء الصيد يرمي الأشياء لمسافات بعيدة جدًا", "تفريغ الغرفة من الأغراض يضعفه"], evidence: ["Spirit Box", "Fingerprints", "Ghost Writing"] },
-            { name: "Banshee", infoAr: ["صرخة فريدة في Parabolic Mic", "غالبًا يغني في الـ Ghost Events", "يستهدف لاعبًا واحدًا فقط"], evidence: ["Fingerprints", "Ghost Orb", "DOTS"] },
-            { name: "Jinn", infoAr: ["سرعته عادية", "إذا رآك من بعيد يصبح سريعًا جدًا", "إذا اقترب منك يعود للسرعة الطبيعية", "لا يستطيع استخدام قدرته بدون كهرباء"], evidence: ["EMF 5", "Fingerprints", "Freezing"] },
-            { name: "Mare", infoAr: ["لا يشغل أي ضوء", "يطفئ الإضاءة فور تشغيلها", "يفضل الظلام ويصطاد مبكرًا فيه"], evidence: ["Spirit Box", "Ghost Orb", "Ghost Writing"] },
-            { name: "Revenant", infoAr: ["سرعته بطيئة جدًا إذا لم يراك (≈1)", "يصبح سريعًا جدًا عند رؤيتك (≈3)", "السِمج يبطئه بوضوح"], evidence: ["Ghost Orb", "Ghost Writing", "Freezing"] },
-            { name: "Shade", infoAr: ["لن يصطاد إلا إذا كنت بعيدًا عنه", "لا يفعل أحداث في نفس الغرفة", "قد يحرق كروسفكسين بنفس المكان", "شبح هادئ جدًا", "عند اشعال دائرة الاستدعاء يمكنه ان يظهر كظل"], evidence: ["EMF 5", "Ghost Writing", "Freezing"] },
-            { name: "Demon", infoAr: ["وقت الكروسفكس بعد السِمج: 1:00", "يصطاد مبكرًا جدًا", "عدواني بشكل ملحوظ"], evidence: ["Fingerprints", "Ghost Writing", "Freezing"] },
-            { name: "Yurei", infoAr: ["يغلق الأبواب بقوة", "يقلل 15% من العقل عند الإغلاق", "يمكنه فتح بابين بنفس الوقت", "السِمج يقيده في غرفته"], evidence: ["Ghost Orb", "Freezing", "DOTS"] },
-            { name: "Oni", infoAr: ["يظهر كثيرًا ونادرًا ما يختفي", "أحداثه قوية وواضحة", "لا يفعل أحداث هوائية"], evidence: ["EMF 5", "Freezing", "DOTS"] },
-            { name: "Yokai", infoAr: ["يصبح عدوانيًا عند التحدث بقربه", "سمعه ضعيف أثناء الصيد"], evidence: ["Spirit Box", "Ghost Orb", "DOTS"] },
-            { name: "Hantu", infoAr: ["سريع جدًا في الأماكن الباردة", "بطيء في الأماكن الدافئة", "يمكن رؤية أنفاسه في الصيد", "لا يمكنه فتح مفتاح الضوء الرئيسي"], evidence: ["Fingerprints", "Ghost Orb", "Freezing"] },
-            { name: "Goryo", infoAr: ["لا يغير غرفته أبدًا", "DOTS يظهر فقط بالكاميرا", "ممتاز للاستبعاد", "لا يمكنك ابدا معرفته الا باستبعاد باقي الاشباح"], evidence: ["EMF 5", "Fingerprints", "DOTS"] },
-            { name: "Myling", infoAr: ["خطواته لا تُسمع إلا عند قرب شديد", "إذا انطفأ الكشاف قبل سماع الخطوات → غالبًا Myling"], evidence: ["EMF 5", "Fingerprints", "Ghost Writing"] },
-            { name: "Onryo", infoAr: ["الشموع تحمي من الصيد", "إذا انطفأت 3 شمعات متتالية → يمكنه الصيد", "يتجاهل الكروسفكس بوجود الشموع"], evidence: ["Spirit Box", "Ghost Orb", "Freezing"] },
-            { name: "The Twins", infoAr: ["قارن بين صيدين (واحد سريع وواحد بطيء)", "نشاط مزدوج في أماكن مختلفة"], evidence: ["EMF 5", "Spirit Box", "Freezing"] },
-            { name: "Raiju", infoAr: ["يصبح أسرع قرب الأجهزة الإلكترونية", "إذا فتحت كشافك وازداد تسارعه → Raiju"], evidence: ["EMF 5", "Ghost Orb", "DOTS"] },
-            { name: "Obake", infoAr: ["يغير شكله أثناء الصيد", "بصماته تختفي بسرعة", "بصمة 6 أصابع أحيانًا"], evidence: ["EMF 5", "Fingerprints", "Ghost Orb"] },
-            { name: "The Mimic", infoAr: ["لديه Ghost Orbs دائمًا (دليل رابع مزيف)", "يقلد سلوك أشباح أخرى"], evidence: ["Spirit Box", "Fingerprints", "Freezing"] },
-            { name: "Moroi", infoAr: ["سرعته تعتمد على العقل (عقل منخفض = سريع جداً)", "إذا رآك تزداد سرعته أكثر"], evidence: ["Spirit Box", "Ghost Writing", "Freezing"] },
-            { name: "Deogen", infoAr: ["سريع جدًا عندما يكون بعيدًا", "يبطئ جدًا عند الاقتراب", "لا يمكن الاختباء منه (اهرب منه بالدوران)"], evidence: ["Spirit Box", "Ghost Writing", "DOTS"] },
-            { name: "Thaye", infoAr: ["أول صيد: سريع جدًا", "كلما طال الوقت يصبح أبطأ", "يزداد نشاطه إذا بقيت في غرفته"], evidence: ["Ghost Writing", "Ghost Orb", "DOTS"] },
-            { name: "Obambo", infoAr: ["يتفاعل بقوة مع الدمى (Dolls / Teddy)", "أثناء الصيد يغيّر اتجاهه فجأة", "صوته متقطع في الـ Parabolic"], evidence: ["EMF 5", "Fingerprints", "Ghost Writing"] },
-            { name: "Dayan", infoAr: ["يعتمد على الضوء (أبطأ في النور)", "في الظلام يسرع ويصطاد مبكرًا", "يطفئ الشموع فورًا"], evidence: ["Spirit Box", "Ghost Orb", "Freezing"] },
-            { name: "Gallu", infoAr: ["يتغذى على الخوف (Ghost Events تنقص عقل أكثر)", "يصبح أسرع كلما نظرت إليه", "تجاهله يقلل عدوانيته"], evidence: ["EMF 5", "Freezing", "DOTS"] }
-        ];
-        // مصفوفة الخرائط - تسحب الصور من مجلد maps محلي
-        const mapsData = [
-            {
-                name: "6 Tanglewood Drive",
-                file: "maps/tanglewood.png",
-                itemsAr: [
-                    "ويجا: في القبو على الطاولة",
-                    "الكروت: في غرفة المعيشة على الطاولة الصغيرة",
-                    "يد القرد: في غرفة الطعام داخل خزانة العرض",
-                    "اداة الموسيقى: في غرفة الحضانة على الرف",
-                    "المرآة: في غرفة النوم الرئيسية على الجدار",
-                    "فودو: في المرآب فوق الصناديق",
-                    "دائرة الاستدعاء: في منتصف القبو"
-                ],
-                itemsEn: ["Ouija: Basement", "Tarot: Living Room", "Monkey Paw: Dining Room", "Music Box: Nursery", "Mirror: Master Bedroom", "Voodoo: Garage", "Summoning Circle: Basement"]
-            },
-            {
-                name: "42 Edgefield Road",
-                file: "maps/edgefield.png",
-                itemsAr: [
-                    "ويجا: غرفة الغسيل فوق الغسالة",
-                    "الكروت: طاولة المدخل فور الدخول",
-                    "يد القرد: غرفة الأطفال (الطابق العلوي)",
-                    "اداة الموسيقى: غرفة المعيشة على الطاولة",
-                    "المرآة: ممر المدخل خلف الباب الرئيسي",
-                    "فودو: غرفة النوم الزرقاء فوق السرير",
-                    "دائرة الاستدعاء: في القبو"
-                ],
-                itemsEn: ["Ouija: Laundry room", "Tarot: Entry table", "Monkey Paw: Kids room", "Music Box: Living room", "Mirror: Entry wall", "Voodoo: Blue bedroom", "Summoning Circle: Basement"]
-            },
-            {
-                name: "10 Ridgeview Court",
-                file: "maps/ridgeview.png",
-                itemsAr: [
-                    "ويجا: المطبخ داخل خزانة المؤن",
-                    "الكروت: يمين المدخل على الطاولة",
-                    "يد القرد: غرفة النوم بالطابق العلوي (يسار)",
-                    "اداة الموسيقى: ممر الطابق العلوي",
-                    "المرآة: ممر القبو على الجدار",
-                    "فودو: المرآب خلف السيارة",
-                    "دائرة الاستدعاء: في منتصف القبو"
-                ],
-                itemsEn: ["Ouija: Kitchen pantry", "Tarot: Entrance right", "Monkey Paw: Upstairs bedroom", "Music Box: Upstairs hallway", "Mirror: Basement wall", "Voodoo: Garage", "Summoning Circle: Basement"]
-            },
-            {
-                name: "Grafton Farmhouse",
-                file: "maps/grafton.png",
-                itemsAr: [
-                    "ويجا: غرفة النوم خلف المطبخ",
-                    "الكروت: غرفة الطعام على الطاولة",
-                    "يد القرد: الطابق العلوي (غرفة النوم اليسرى)",
-                    "اداة الموسيقى: البهو الرئيسي على الطاولة",
-                    "المرآة: غرفة المعيشة خلف الأريكة",
-                    "فودو: غرفة الحضانة (الطابق العلوي)",
-                    "دائرة الاستدعاء: التخزين خلف المطبخ"
-                ],
-                itemsEn: ["Ouija: Master bedroom", "Tarot: Dining room", "Monkey Paw: Upstairs bedroom", "Music Box: Foyer", "Mirror: Living room", "Voodoo: Nursery", "Summoning Circle: Storage"]
-            },
-            {
-                name: "Bleasdale Farmhouse",
-                file: "maps/bleasdale.png",
-                itemsAr: [
-                    "ويجا: في ورشة العمل (Workshop)",
-                    "الكروت: في المكتب (Office) بالمنضدة",
-                    "يد القرد: في العلية (Attic) فوق الصناديق",
-                    "اداة الموسيقى: غرفة المعيشة بجانب التلفاز",
-                    "المرآة: في الممر العلوي",
-                    "فودو: غرفة النوم بجانب الحمام",
-                    "دائرة الاستدعاء: في القبو"
-                ],
-                itemsEn: ["Ouija: Workshop", "Tarot: Office", "Monkey Paw: Attic", "Music Box: Living room", "Mirror: Upstairs hall", "Voodoo: Bedroom", "Summoning Circle: Basement"]
-            },
-            {
-                name: "Camp Woodwind",
-                file: "maps/woodwind.png",
-                itemsAr: [
-                    "ويجا: خيمة الطعام",
-                    "الكروت: الخيمة الصفراء",
-                    "يد القرد: بجانب خيمة الألعاب",
-                    "اداة الموسيقى: الخيمة الحمراء",
-                    "المرآة: بجانب الخيمة البيضاء الكبيرة",
-                    "فودو: وسط المخيم عند الجذوع",
-                    "دائرة الاستدعاء: منطقة العشاء المفتوحة"
-                ],
-                itemsEn: ["Ouija: Food tent", "Tarot: Yellow tent", "Monkey Paw: Near Games tent", "Music Box: Red tent", "Mirror: Large white tent", "Voodoo: Center logs", "Summoning Circle: Dining area"]
-            },
-            {
-                name: "Maple Lodge Campsite",
-                file: "maps/maplelodge.png",
-                itemsAr: [
-                    "ويجا: خيمة التخزين",
-                    "الكروت: عند طاولة الاستقبال (المدخل)",
-                    "يد القرد: عند رصيف القوارب (Pier)",
-                    "اداة الموسيقى: بجانب نار المخيم الكبيرة",
-                    "المرآة: عند الحمام الخارجي (Blue Tent)",
-                    "فودو: في منطقة الطبخ",
-                    "دائرة الاستدعاء: داخل الكوخ الخشبي (Cabin)"
-                ],
-                itemsEn: ["Ouija: Storage tent", "Tarot: Entrance", "Monkey Paw: Pier", "Music Box: Campfire", "Mirror: Restrooms", "Voodoo: Kitchen area", "Summoning Circle: Cabin"]
-            },
-            {
-                name: "Prison",
-                file: "maps/prison.png",
-                itemsAr: [
-                    "ويجا: عند المدخل الرئيسي (Security)",
-                    "الكروت: غرفة الزوار (Visitation)",
-                    "يد القرد: في ممرات الزنازين",
-                    "اداة الموسيقى: خلف مكتب الاستقبال",
-                    "المرآة: ممر المدخل الأيمن",
-                    "فودو: في منطقة الكافتيريا",
-                    "دائرة الاستدعاء: في ساحة السجن"
-                ],
-                itemsEn: ["Ouija: Security", "Tarot: Visitation", "Monkey Paw: Cell blocks", "Music Box: Entry desk", "Mirror: Entry hallway", "Voodoo: Cafeteria", "Summoning Circle: Yard"]
-            },
-            {
-                name: "Sunny Meadows",
-                file: "maps/sunnymeadows.png",
-                itemsAr: [
-                    "جميع الأدوات: في المصلى (Chapel) عند المدخل الرئيسي",
-                    "ملاحظة: تظهر الأدوات السبعة معاً في المصلى في هذه الخريطة"
-                ],
-                itemsEn: ["All Items: In the Chapel at the entrance"]
-            },
-            {
-                name: "Point Hope",
-                file: "maps/pointhope.png",
-                itemsAr: [
-                    "ويجا: الطابق 2 (غرفة الألعاب)",
-                    "الكروت: الطابق 1 (منطقة الجلوس)",
-                    "يد القرد: الطابق 3 (غرفة الاستراحة)",
-                    "اداة الموسيقى: الطابق 4 (غرفة النوم)",
-                    "المرآة: ممر السلالم",
-                    "فودو: الطابق 2 (خلف الرفوف)",
-                    "دائرة الاستدعاء: الطابق الأرضي (المدخل)"
-                ],
-                itemsEn: ["Ouija: Floor 2", "Tarot: Floor 1", "Monkey Paw: Floor 3", "Music Box: Floor 4", "Mirror: Stairwell", "Voodoo: Floor 2", "Summoning Circle: Ground floor"]
-            },
-            {
-                name: "Brownstone High School",
-                file: "maps/school.png",
-                itemsAr: [
-                    "ويجا: داخل أول فصل يمين",
-                    "الكروت: في ممر المدخل الرئيسي",
-                    "يد القرد: فوق خشبة المسرح",
-                    "اداة الموسيقى: داخل المكتبة",
-                    "المرآة: ممر السلالم",
-                    "فودو: داخل صالة الرياضة",
-                    "دائرة الاستدعاء: في منتصف الساحة"
-                ],
-                itemsEn: ["Ouija: Classroom", "Tarot: Main hall", "Monkey Paw: Stage", "Music Box: Library", "Mirror: Stairwell", "Voodoo: Gym", "Summoning Circle: Courtyard"]
-            },
-            {
-                name: "Willow Street House",
-                file: "maps/willow.png",
-                itemsAr: [
-                    "ويجا: داخل خزانة الممر",
-                    "الكروت: غرفة المعيشة",
-                    "يد القرد: الممر المؤدي للمرآب",
-                    "اداة الموسيقى: المطبخ",
-                    "المرآة: ممر القبو",
-                    "فودو: المرآب",
-                    "دائرة الاستدعاء: منتصف القبو"
-                ],
-                itemsEn: ["Ouija: Hallway closet", "Tarot: Living room", "Monkey Paw: Hallway", "Music Box: Kitchen", "Mirror: Basement hall", "Voodoo: Garage", "Summoning Circle: Basement"]
-            }
+        const ghosts = [
+            { name: "Spirit", speed: "1.7 m/s", evidence: ["EMF 5", "Spirit Box", "Ghost Writing"], info: ["وقت الكروسفكس بعد استخدام السِمج: 3:10", "شبح متوازن بدون سلوك فريد أثناء الصيد"] },
+            { name: "Wraith", speed: "1.7 m/s", evidence: ["EMF 5", "Spirit Box", "DOTS"], info: ["لا يترك آثار أقدام بالملح", "يمكنه التنقل مباشرة إلى اللاعب", "يتأذى بقوة من السِمج"] },
+            { name: "Phantom", speed: "1.7 m/s", evidence: ["Spirit Box", "Fingerprints", "DOTS"], info: ["لا يظهر بوضوح في الصور", "يختفي كثيرًا أثناء الصيد", "النظر له يقلل العقل بسرعة"] },
+            { name: "Poltergeist", speed: "1.7 m/s", evidence: ["Spirit Box", "Fingerprints", "Ghost Writing"], info: ["إذا رمى عدة أشياء دفعة واحدة فهو بولتر", "أثناء الصيد يرمي الأشياء لمسافات بعيدة جدًا", "تفريغ الغرفة من الأغراض يضعفه"] },
+            { name: "Banshee", speed: "1.7 m/s", evidence: ["Fingerprints", "Ghost Orb", "DOTS"], info: ["صرخة فريدة في Parabolic Mic", "غالبًا يغني في الـ Ghost Events", "يستهدف لاعبًا واحدًا فقط"] },
+            { name: "Jinn", speed: "1.7 - 2.5 m/s", evidence: ["EMF 5", "Fingerprints", "Freezing"], info: ["سرعته عادية، لكن إذا رآك من بعيد يصبح سريعًا جدًا", "إذا اقترب منك يعود للسرعة الطبيعية", "لا يستطيع استخدام قدرته بدون كهرباء"] },
+            { name: "Mare", speed: "1.7 m/s", evidence: ["Spirit Box", "Ghost Orb", "Ghost Writing"], info: ["لا يشغل أي ضوء، ويطفئ الإضاءة فور تشغيلها", "يفضل الظلام ويصطاد مبكرًا فيه"] },
+            { name: "Revenant", speed: "1.1 - 3.0 m/s", evidence: ["Ghost Orb", "Ghost Writing", "Freezing"], info: ["سرعته بطيئة جدًا إذا لم يراك (≈1)", "يصبح سريعًا جدًا عند رؤيتك (≈3)", "السِمج يبطئه بوضوح"] },
+            { name: "Shade", speed: "1.7 m/s", evidence: ["EMF 5", "Ghost Writing", "Freezing"], info: ["لن يصطاد إلا إذا كنت بعيداً عنه", "لا يفعل أحداث في نفس الغرفة", "قد يحرق كروسفكسين بنفس المكان", "عند اشعال دائرة الاستدعاء يمكنه ان يظهر كظل"] },
+            { name: "Demon", speed: "1.7 m/s", evidence: ["Fingerprints", "Ghost Writing", "Freezing"], info: ["وقت الكروسفكس بعد السِمج: 1:00", "يصطاد مبكرًا جدًا وعدواني بشكل ملحوظ"] },
+            { name: "Yurei", speed: "1.7 m/s", evidence: ["Ghost Orb", "Freezing", "DOTS"], info: ["يغلق الأبواب بقوة ويقلل 15% من العقل عند الإغلاق", "يمكنه فتح بابين بنفس الوقت", "السِمج يقيده في غرفته"] },
+            { name: "Oni", speed: "1.7 m/s", evidence: ["EMF 5", "Freezing", "DOTS"], info: ["يظهر كثيرًا ونادرًا ما يختفي", "أحداثه قوية وواضحة ولا يفعل أحداث هوائية"] },
+            { name: "Yokai", speed: "1.7 m/s", evidence: ["Spirit Box", "Ghost Orb", "DOTS"], info: ["يصبح عدوانيًا عند التحدث بقربه", "سمعه ضعيف أثناء الصيد"] },
+            { name: "Hantu", speed: "1.4 - 2.7 m/s", evidence: ["Fingerprints", "Ghost Orb", "Freezing"], info: ["سريع جدًا في الأماكن الباردة وبطيء في الدافئة", "يمكن رؤية أنفاسه في الصيد", "لا يمكنه فتح مفتاح الضوء الرئيسي"] },
+            { name: "Goryo", speed: "1.7 m/s", evidence: ["EMF 5", "Fingerprints", "DOTS"], info: ["لا يغير غرفته أبدًا، والـ DOTS يظهر فقط بالكاميرا", "لا يمكنك ابدا معرفته الا باستبعاد باقي الاشباح"] },
+            { name: "Myling", speed: "1.7 m/s", evidence: ["EMF 5", "Fingerprints", "Ghost Writing"], info: ["خطواته لا تُسمع إلا عند قرب شديد", "إذا انطفأ الكشاف قبل سماع الخطوات فهو غالباً Myling"] },
+            { name: "Onryo", speed: "1.7 m/s", evidence: ["Spirit Box", "Ghost Orb", "Freezing"], info: ["الشموع تحمي من الصيد", "إذا انطفأت 3 شمعات متتالية يمكنه الصيد", "يتجاهل الكروسفكس بوجود الشموع"] },
+            { name: "The Twins", speed: "1.5 / 1.9 m/s", evidence: ["EMF 5", "Spirit Box", "Freezing"], info: ["قارن بين صيدين: صيد سريع وصيد بطيء", "نشاط مزدوج في أماكن مختلفة"] },
+            { name: "Raiju", speed: "1.7 - 2.5 m/s", evidence: ["EMF 5", "Ghost Orb", "DOTS"], info: ["يصبح أسرع قرب الأجهزة الإلكترونية", "إذا فتحت كشافك وازداد تسارعه فهو Raiju"] },
+            { name: "Obake", speed: "1.7 m/s", evidence: ["EMF 5", "Fingerprints", "Ghost Orb"], info: ["يغير شكله أثناء الصيد، وبصماته تختفي بسرعة", "بصمة 6 أصابع أحيانًا"] },
+            { name: "The Mimic", speed: "Variable", evidence: ["Spirit Box", "Fingerprints", "Freezing"], info: ["لديه Ghost Orbs دائمًا لكنها ليست حقيقية", "يقلد سلوك أشباح أخرى"] },
+            { name: "Moroi", speed: "1.5 - 2.25 m/s", evidence: ["Spirit Box", "Ghost Writing", "Freezing"], info: ["سرعته تعتمد على العقل (عقل منخفض = سريع جداً)", "إذا رآك تزداد سرعته أكثر"] },
+            { name: "Deogen", speed: "0.4 - 3.0 m/s", evidence: ["Spirit Box", "Ghost Writing", "DOTS"], info: ["يعرف مكانك دائماً ولا يمكن الاختباء منه", "يبطئ جدًا عند الاقتراب (0.4)", "النجاة بالدوران حول طاولة أو جسم"] },
+            { name: "Thaye", speed: "1.0 - 2.75 m/s", evidence: ["Ghost Writing", "Ghost Orb", "DOTS"], info: ["أول صيد سريع جداً ثم يبرد ويصبح أبطأ", "إذا بقيت في مجال رؤيته أثناء الصيد يزداد نشاطه"] },
+            { name: "Obambo", speed: "1.7 m/s", evidence: ["EMF 5", "Spirit Box", "Fingerprints"], info: ["يتفاعل بقوة مع الدمى (Dolls / Teddy)", "أثناء الصيد يغيّر اتجاهه فجأة وصوته متقطع في الـ Parabolic"] },
+            { name: "Dayan", speed: "1.5 - 2.3 m/s", evidence: ["Ghost Writing", "Freezing", "DOTS"], info: ["يعتمد على الضوء: في الأنوار مشغلة يصبح أبطأ", "في الظلام يسرع ويصطاد مبكرًا ويطفئ الشموع فورًا"] },
+            { name: "Gallu", speed: "1.7 - 2.6 m/s", evidence: ["EMF 5", "Ghost Orb", "Freezing"], info: ["يتغذى على الخوف: كل Ghost Event يقلل العقل أكثر من الطبيعي", "يصبح أسرع كلما نظرت إليه أثناء الصيد، وتجاهله يقلل عدوانيته"] }
         ];
 
-        let currentLang = 'ar';
-        let included = [];
-        let excluded = [];
+        const maps = [
+            { name: "6 Tanglewood Drive", size: "Small", rooms: 11, floors: 2, file: "Tanglewood.png", info: "الخريطة الكلاسيكية، مخرج واحد وقبو." },
+            { name: "42 Edgefield Road", size: "Small", rooms: 17, floors: 3, file: "Edgefield.png", info: "تتميز بوجود غرف نوم كثيرة وممرات ضيقة." },
+            { name: "10 Ridgeview Court", size: "Small", rooms: 15, floors: 3, file: "Ridgeview.png", info: "منزل سكني يحتوي على قبو وطابقين علويين." },
+            { name: "Grafton Farmhouse", size: "Small", rooms: 13, floors: 2, file: "Grafton.png", info: "مزرعة خشبية واسعة، تفتقر لأماكن الاختباء." },
+            { name: "Bleasdale Farmhouse", size: "Small", rooms: 16, floors: 3, file: "Bleasdale.png", info: "مزرعة تحتوي على علية (Attic) خشبية واسعة." },
+            { name: "Camp Woodwind", size: "Small", rooms: 7, floors: 1, file: "Woodwind.png", info: "خريطة مفتوحة (مخيم)، خطيرة جداً في الصيد." },
+            { name: "Willow Street House", size: "Small", rooms: 10, floors: 2, file: "Willow.png", info: "منزل بدون طابق علوي، يحتوي على قبو فقط." },
+            { name: "Prison", size: "Large", rooms: 29, floors: 2, file: "Prison.png", info: "سجن ضخم، يتطلب ميكروفون صوت لتحديد الغرفة." },
+            { name: "Sunny Meadows", size: "Large", rooms: 69, floors: 2, file: "SunnyMeadows.png", info: "أكبر خريطة في اللعبة، مستشفى مجانين ضخم." },
+            { name: "Brownstone High School", size: "Large", rooms: 58, floors: 2, file: "School.png", info: "مدرسة ثانوية مهجورة بممرات طويلة جداً." }
+        ];
 
-        function changeLang(lang) {
-            currentLang = lang;
-            const t = translations[lang];
-            document.getElementById('main-html').dir = (lang === 'ar') ? 'rtl' : 'ltr';
-            
-            ["brand-name", "nav-ev", "nav-hunt", "nav-list", "nav-maps", "nav-reset", "ev-title", "hunt-title", "list-placeholder", "map-placeholder"].forEach(id => {
-                if(document.getElementById(id)) document.getElementById(id).innerText = t[id.replace("-", "")] || t[id.split("-")[1]];
-            });
+        const tarotCards = [
+            { name: "The Sun", file: "Sun.png", effect: "عقل 100%", desc: "تُعيد مستوى العقل (Sanity) الخاص باللاعب إلى 100% فوراً." },
+            { name: "The Moon", file: "Moon.png", effect: "عقل 0%", desc: "تُخفض مستوى العقل الخاص باللاعب إلى 0% فوراً." },
+            { name: "The Tower", file: "Tower.png", effect: "تفاعل", desc: "تُجبر الشبح على القيام بتفاعل (Interaction) في مكانه الحالي." },
+            { name: "Wheel of Fortune", file: "Wheel.png", effect: "حظ عشوائي", desc: "إذا احترقت باللون الأخضر تزيد العقل 25%، وإذا احترقت بالأحمر تنقصه 25%." },
+            { name: "The Devil", file: "Devil.png", effect: "حدث شبح", desc: "تُجبر الشبح على القيام بحدث (Ghost Event) بالقرب من اللاعب." },
+            { name: "Death", file: "Death.png", effect: "صيد ملعون", desc: "تُطلق صيداً ملعوناً فوراً (Cursed Hunt) لا يمكن منعه." },
+            { name: "The Hermit", file: "Hermit.png", effect: "حبس الشبح", desc: "تمنع الشبح من مغادرة غرفته أو التجول لمدة دقيقة كاملة." },
+            { name: "High Priestess", file: "Priestess.png", effect: "إحياء", desc: "تعيد إحياء لاعب ميت عشوائياً، أو تحفظ حياة أول لاعب يموت لاحقاً." },
+            { name: "The Fool", file: "Fool.png", effect: "خدعة", desc: "تظهر ككرت آخر في البداية ثم تتحول لكرت الغبي لتلغي التأثير." },
+            { name: "The Hanged Man", file: "Hanged.png", effect: "موت فوري", desc: "تقتل اللاعب الذي سحب الكرت فوراً دون أي فرصة للنجاة." }
+        ];
 
-            document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
-            document.getElementById('lang-' + lang).classList.add('active');
-            
-            updateEvidenceFilter();
-            initGhostList();
-            initMapsList();
-        }
-
-        function initGhostList() {
-            const list = document.getElementById('ghost-names-list');
-            list.innerHTML = '';
-            ghosts.forEach(g => {
-                const div = document.createElement('div');
-                div.className = 'list-item';
-                div.innerText = g.name;
-                div.onclick = () => {
-                    document.querySelectorAll('#ghost-names-list .list-item').forEach(i => i.classList.remove('selected'));
-                    div.classList.add('selected');
-                    const info = currentLang === 'ar' ? g.infoAr : g.infoEn;
-                    document.getElementById('ghost-details-panel').innerHTML = `
-                        <h1 style="color:var(--accent-color)">${g.name}</h1>
-                        <ul class="info-list">${info.map(i => `<li>${i}</li>`).join('')}</ul>
-                        <div style="margin-top:20px"><strong>${translations[currentLang].officialEv}</strong><br>
-                        ${g.evidence.map(e => `<span class="tag">${e}</span>`).join('')}</div>
-                    `;
-                };
-                list.appendChild(div);
-            });
-        }
-
-        function initMapsList() {
-            const list = document.getElementById('maps-list-column');
-            list.innerHTML = '';
-            mapsData.forEach(m => {
-                const div = document.createElement('div');
-                div.className = 'list-item';
-                div.innerText = m.name;
-                div.onclick = () => {
-                    document.querySelectorAll('#maps-list-column .list-item').forEach(i => i.classList.remove('selected'));
-                    div.classList.add('selected');
-                    const items = currentLang === 'ar' ? m.itemsAr : m.itemsEn;
-                    document.getElementById('map-details-panel').innerHTML = `
-                        <h1 style="color:var(--accent-color)">${m.name}</h1>
-                        <div class="map-display">
-                            <img src="${m.file}" alt="${m.name}" onerror="this.parentElement.innerHTML='<p style=padding:20px;color:#666;text-align:center>الصورة غير موجودة في المجلد maps/${m.file.split('/')[1]}</p>'">
-                        </div>
-                        <h3>${translations[currentLang].cursedTitle}</h3>
-                        <ul class="info-list">${items.map(i => `<li>${i}</li>`).join('')}</ul>
-                    `;
-                };
-                list.appendChild(div);
-            });
-        }
+        let included = [], excluded = [];
 
         function showTab(id, btn) {
             document.querySelectorAll('.content-section').forEach(s => s.classList.remove('active'));
             document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
             document.getElementById(id).classList.add('active');
             btn.classList.add('active');
+            if(id === 'cards-tab') renderCards();
+            if(id === 'maps-tab') renderMaps();
+            if(id === 'ghosts-tab') renderGhostList();
         }
 
-        // Evidence Logic
-        document.querySelectorAll('.evidence-btn').forEach(btn => {
+        document.querySelectorAll('.ev-btn').forEach(btn => {
             btn.onclick = () => {
-                const val = btn.getAttribute('data-val');
+                const val = btn.dataset.val;
                 if (!btn.classList.contains('included') && !btn.classList.contains('excluded')) {
                     btn.classList.add('included'); included.push(val);
                 } else if (btn.classList.contains('included')) {
@@ -475,29 +212,88 @@ const ghosts = [
                 } else {
                     btn.classList.remove('excluded'); excluded = excluded.filter(i => i !== val);
                 }
-                updateEvidenceFilter();
+                updateEvidence();
             };
         });
 
-        function updateEvidenceFilter() {
+        function updateEvidence() {
             const filtered = ghosts.filter(g => included.every(e => g.evidence.includes(e)) && !excluded.some(e => g.evidence.includes(e)));
             document.getElementById('evidence-results').innerHTML = filtered.map(g => `
-                <div class="ghost-card">
-                    <h2 style="color:var(--accent-color)">${g.name}</h2>
-                    ${g.evidence.map(e => `<span class="tag">${e}</span>`).join('')}
+                <div class="result-card">
+                    <h3 style="margin:0 0 10px 0;">👻 ${g.name} <span class="tag speed-tag" style="float:left">${g.speed}</span></h3>
+                    <div style="margin:10px 0;">${g.evidence.map(ev => `<span class="tag evidence-tag">${ev}</span>`).join('')}</div>
+                    <ul class="info-list" style="margin-top:10px;">
+                        ${g.info.map(i => `<li style="font-size:0.85rem; padding:8px;">${i}</li>`).join('')}
+                    </ul>
                 </div>
             `).join('');
         }
 
         function resetEvidence() {
             included = []; excluded = [];
-            document.querySelectorAll('.evidence-btn').forEach(b => b.classList.remove('included', 'excluded'));
-            updateEvidenceFilter();
+            document.querySelectorAll('.ev-btn').forEach(b => b.classList.remove('included', 'excluded'));
+            updateEvidence();
         }
 
-        // Start
-        initGhostList();
-        initMapsList();
+        function renderGhostList(query = "") {
+            const list = document.getElementById('ghost-list');
+            const filtered = ghosts.filter(g => 
+                g.name.toLowerCase().includes(query.toLowerCase()) || 
+                g.info.some(i => i.toLowerCase().includes(query.toLowerCase())) ||
+                g.speed.toLowerCase().includes(query.toLowerCase())
+            );
+            list.innerHTML = filtered.map(g => `<div class="list-item" onclick="viewGhost('${g.name}', this)">${g.name} <small style="float:left">${g.speed}</small></div>`).join('');
+        }
+
+        function viewGhost(name, el) {
+            document.querySelectorAll('.list-item').forEach(li => li.classList.remove('selected'));
+            el.classList.add('selected');
+            const g = ghosts.find(x => x.name === name);
+            document.getElementById('ghost-details').innerHTML = `
+                <h1 style="color:var(--accent-color); margin-top:0;">👻 ${g.name}</h1>
+                <div style="margin-bottom:20px;">
+                    <span class="tag speed-tag" style="font-size:1rem;">السرعة: ${g.speed}</span>
+                    ${g.evidence.map(e => `<span class="tag evidence-tag">${e}</span>`).join('')}
+                </div>
+                <h3>المعلومات والقدرات الفنية الكاملة:</h3>
+                <ul class="info-list">${g.info.map(i => `<li>${i}</li>`).join('')}</ul>
+            `;
+        }
+
+        function renderMaps() {
+            const list = document.getElementById('maps-list');
+            list.innerHTML = maps.map((m, i) => `<div class="list-item" onclick="viewMap(${i}, this)">${m.name}</div>`).join('');
+        }
+
+        function viewMap(i, el) {
+            document.querySelectorAll('#maps-list .list-item').forEach(li => li.classList.remove('selected'));
+            el.classList.add('selected');
+            const m = maps[i];
+            document.getElementById('map-details').innerHTML = `
+                <h1>🗺️ ${m.name}</h1>
+                <img src="maps/${m.file}" class="map-img" onerror="this.src='https://via.placeholder.com/600x350?text=${m.name}+Layout'">
+                <div style="display:flex; gap:10px; margin-bottom:20px;">
+                    <span class="tag">الحجم: ${m.size}</span>
+                    <span class="tag">الغرف: ${m.rooms}</span>
+                    <span class="tag">الطوابق: ${m.floors}</span>
+                </div>
+                <p style="background:#222; padding:15px; border-radius:8px;">${m.info}</p>
+            `;
+        }
+
+        function renderCards() {
+            document.getElementById('cards-container').innerHTML = tarotCards.map(c => `
+                <div class="tarot-card">
+                    <img src="cards/${c.file}" onerror="this.src='https://via.placeholder.com/90x140?text=${c.name}'">
+                    <h3 style="color:var(--accent-color); margin:5px 0;">${c.name}</h3>
+                    <p style="font-weight:bold; color:#fff; margin:5px 0;">${c.effect}</p>
+                    <p style="font-size:0.8rem; color:#aaa; line-height:1.4;">${c.desc}</p>
+                </div>
+            `).join('');
+        }
+
+        renderGhostList();
+        renderMaps();
     </script>
 </body>
 </html>
