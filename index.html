@@ -3,297 +3,2369 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Phasmophobia</title>
+    <title>HOME LAND | الرئيسية</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Supabase JS (UMD) - استبدل المفاتيح أدناه بقيم مشروعك -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js/dist/umd/supabase.min.js"></script>
     <style>
+        /* ========== CSS Variables & Reset ========== */
         :root {
-            --bg-color: #0a0a0a;
-            --sidebar-color: #121212;
-            --card-bg: #1e1e1e;
-            --accent-color: #ff4444; 
-            --include-color: #28a745;
-            --exclude-color: #dc3545;
-            --text-color: #f0f0f0;
-            --border-color: #333;
+            --primary-color: #0a2d5e; /* أزرق داكن أنيق */
+            --secondary-color: #d4a762; /* ذهبي دافئ */
+            --accent-color: #2e7d5a; /* أخضر ازدهار */
+            --light-bg: #f8fafc;
+            --dark-text: #1e293b;
+            --light-text: #64748b;
+            --white: #ffffff;
+            --card-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+            --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            --border-radius: 12px;
+            --section-padding: 4.5rem 2rem;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            margin: 0;
-            display: flex;
-            height: 100vh;
-            overflow: hidden;
+            font-family: 'IBM Plex Sans Arabic', sans-serif;
+            background-color: var(--light-bg);
+            color: var(--dark-text);
+            line-height: 1.7;
+            overflow-x: hidden;
         }
 
-        #sidebar {
-            width: 260px;
-            background-color: var(--sidebar-color);
+        a {
+            text-decoration: none;
+            color: inherit;
+            transition: var(--transition);
+        }
+
+        ul {
+            list-style: none;
+        }
+
+        img {
+            max-width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0 1.5rem;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 0.85rem 2.2rem;
+            border-radius: var(--border-radius);
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: var(--transition);
+            border: none;
+            outline: none;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary-color), #1a4396);
+            color: var(--white);
+            box-shadow: 0 4px 12px rgba(10, 45, 94, 0.25);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 18px rgba(10, 45, 94, 0.35);
+            background: linear-gradient(135deg, #1a4396, var(--primary-color));
+        }
+
+        /* ========== Header ========== */
+        .main-header {
+            background-color: var(--white);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            padding: 1rem 0;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 1.9rem;
+            font-weight: 800;
+            color: var(--primary-color);
+        }
+
+        .logo i {
+            color: var(--secondary-color);
+        }
+
+        .logo span {
+            color: var(--secondary-color);
+        }
+
+        .main-nav ul {
+            display: flex;
+            gap: 1.8rem;
+        }
+
+        .main-nav a {
+            font-weight: 600;
+            color: var(--dark-text);
+            position: relative;
+            padding: 0.5rem 0;
+            font-size: 0.95rem;
+            white-space: nowrap;
+        }
+
+        .main-nav a::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 3px;
+            background-color: var(--secondary-color);
+            bottom: 0;
+            right: 0;
+            transition: var(--transition);
+            border-radius: 2px;
+        }
+
+        .main-nav a:hover {
+            color: var(--primary-color);
+        }
+
+        .main-nav a:hover::after {
+            width: 100%;
+        }
+
+        .user-menu {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .user-welcome {
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+
+        .login-header-btn {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 0.6rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .login-header-btn:hover {
+            background: #1a4396;
+            transform: translateY(-2px);
+        }
+
+        .logout-btn {
+            background: transparent;
+            border: 2px solid var(--primary-color);
+            color: var(--primary-color);
+            padding: 0.5rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .logout-btn:hover {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        /* ========== Animated Login/Signup System ========== */
+        .animated-login-overlay {
+            position: fixed;
+            inset: 0;
+            background: linear-gradient(90deg, #e2e2e2, #c9d6ff);
+            z-index: 9999;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.35s ease, visibility 0.35s ease;
+            padding: 1.2rem;
+        }
+
+        .animated-login-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .animated-container {
+            position: relative;
+            width: 850px;
+            max-width: 100%;
+            height: 800px;
+            max-height: 90vh;
+            background: #fff;
+            margin: 20px;
+            border-radius: 30px;
+            box-shadow: 0 0 30px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+            font-family: 'IBM Plex Sans Arabic', sans-serif;
+        }
+
+        @media screen and (max-width: 650px) {
+            .animated-container {
+                height: auto;
+                min-height: calc(100vh - 40px);
+            }
+        }
+
+        .animated-container h1 {
+            font-size: 36px;
+            margin: -10px 0;
+        }
+
+        .animated-container p {
+            font-size: 14.5px;
+            margin: 15px 0;
+        }
+
+        .animated-form {
+            width: 100%;
+        }
+
+        .form-box {
+            position: absolute;
+            right: 0;
+            width: 50%;
+            height: 100%;
+            background: #fff;
+            display: flex;
+            align-items: center;
+            color: #333;
+            text-align: center;
+            padding: 40px;
+            z-index: 1;
+            transition: 0.6s ease-in-out 1.2s, visibility 0s 1s;
+        }
+
+        .animated-container.active .form-box {
+            right: 50%;
+        }
+
+        .form-box.register {
+            visibility: hidden;
+        }
+        .animated-container.active .form-box.register {
+            visibility: visible;
+        }
+
+        .input-box {
+            position: relative;
+            margin: 20px 0;
+        }
+
+        .input-box input {
+            width: 100%;
+            padding: 13px 50px 13px 20px;
+            background: #eee;
+            border-radius: 8px;
+            border: none;
+            outline: none;
+            font-size: 16px;
+            color: #333;
+            font-weight: 500;
+            text-align: right;
+            direction: rtl;
+        }
+
+        .input-box input::placeholder {
+            color: #888;
+            font-weight: 400;
+        }
+
+        .input-box i {
+            position: absolute;
+            left: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 20px;
+            color: #666;
+        }
+
+        .forgot-link {
+            margin: -15px 0 15px;
+        }
+        .forgot-link a {
+            font-size: 14.5px;
+            color: #333;
+        }
+
+        .animated-btn {
+            width: 100%;
+            height: 48px;
+            background: linear-gradient(135deg, var(--primary-color), #1a4396);
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            color: #fff;
+            font-weight: 600;
+            transition: var(--transition);
+        }
+
+        .animated-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(10, 45, 94, 0.3);
+        }
+
+        .social-icons {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .social-icons a {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            border: 2px solid #ccc;
+            border-radius: 8px;
+            font-size: 18px;
+            color: #333;
+            transition: var(--transition);
+        }
+
+        .social-icons a:hover {
+            border-color: var(--primary-color);
+            color: var(--primary-color);
+            transform: translateY(-3px);
+        }
+
+        .toggle-box {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+        }
+
+        .toggle-box::before {
+            content: "";
+            position: absolute;
+            left: -250%;
+            width: 300%;
+            height: 100%;
+            background: linear-gradient(135deg, var(--primary-color), #1a4396);
+            border-radius: 150px;
+            z-index: 2;
+            transition: 1.8s ease-in-out;
+        }
+
+        .animated-container.active .toggle-box::before {
+            left: 50%;
+        }
+
+        .toggle-panel {
+            position: absolute;
+            width: 50%;
+            height: 100%;
+            color: #fff;
             display: flex;
             flex-direction: column;
-            padding: 20px;
-            border-inline-end: 2px solid var(--border-color);
+            justify-content: center;
+            align-items: center;
+            z-index: 2;
+            transition: 0.6s ease-in-out;
+            padding: 40px;
+            text-align: center;
         }
 
-        .nav-btn {
-            background: #222;
-            color: #aaa;
-            border: 1px solid var(--border-color);
-            padding: 14px;
-            margin-bottom: 10px;
-            cursor: pointer;
+        .toggle-panel.toggle-left {
+            left: 0;
+            transition-delay: 1.2s;
+        }
+        .animated-container.active .toggle-panel.toggle-left {
+            left: -50%;
+            transition-delay: 0.6s;
+        }
+
+        .toggle-panel.toggle-right {
+            right: -50%;
+            transition-delay: 0.6s;
+        }
+        .animated-container.active .toggle-panel.toggle-right {
+            right: 0;
+            transition-delay: 1.2s;
+        }
+
+        .toggle-panel h1 {
+            font-size: 32px;
+            margin-bottom: 20px;
+            color: #fff;
+        }
+
+        .toggle-panel p {
+            margin-bottom: 20px;
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        /* زر إضافي في الشاشة الزرقاء للانتقال إلى تسجيل الدخول */
+        .toggle-right .blue-screen-login-btn {
+            width: 160px;
+            height: 46px;
+            background: transparent;
+            border: 2px solid #fff;
+            box-shadow: none;
+            color: #fff;
+            font-weight: 600;
             border-radius: 8px;
-            text-align: right;
-            transition: 0.3s;
-            font-weight: bold;
+            cursor: pointer;
+            transition: var(--transition);
+            display: none; /* مخفي افتراضياً */
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 10px;
         }
 
-        .nav-btn.active { background: var(--accent-color); color: white; }
+        .toggle-right .blue-screen-login-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
 
-        #main-view { flex-grow: 1; padding: 25px; overflow-y: auto; }
-        .content-section { display: none; max-width: 1100px; margin: 0 auto; }
-        .content-section.active { display: block; animation: fadeIn 0.3s ease; }
+        .animated-container.active .toggle-right .blue-screen-login-btn {
+            display: flex; /* يظهر فقط عند التواجد في شاشة التسجيل */
+        }
 
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .toggle-left .animated-btn {
+            width: 160px;
+            height: 46px;
+            background: transparent;
+            border: 2px solid #fff;
+            box-shadow: none;
+        }
 
-        .list-container { display: flex; gap: 20px; height: 85vh; }
-        .side-column { width: 320px; overflow-y: auto; background: #111; padding: 15px; border-radius: 10px; border: 1px solid var(--border-color); }
-        .details-column { flex-grow: 1; background: var(--card-bg); padding: 25px; border-radius: 10px; overflow-y: auto; border: 1px solid var(--border-color); }
+        .toggle-left .animated-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
 
-        .search-box { width: 100%; padding: 12px; background: #000; border: 1px solid var(--border-color); color: white; border-radius: 8px; margin-bottom: 15px; box-sizing: border-box; font-size: 1rem; }
-        .list-item { padding: 12px; margin-bottom: 6px; border-radius: 6px; cursor: pointer; background: #222; color: #ccc; transition: 0.2s; }
-        .list-item.selected { background: #441111; border-inline-start: 4px solid var(--accent-color); color: white; }
+        /* تحسينات للتصميم الحالي */
+        .form-box h2 {
+            color: var(--primary-color);
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
 
-        .tag { display: inline-block; background: #333; color: #ddd; padding: 4px 10px; border-radius: 15px; font-size: 0.8rem; margin: 3px; }
-        .speed-tag { background: #113344; color: #88ccff; font-weight: bold; }
-        .evidence-tag { background: #155724; color: #d4edda; }
+        .form-box h2 i {
+            color: var(--secondary-color);
+        }
 
-        .evidence-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 10px; margin-bottom: 20px; }
-        .ev-btn { padding: 12px; background: #252525; border: 1px solid #444; border-radius: 6px; cursor: pointer; text-align: center; font-weight: bold; }
-        .ev-btn.included { background: var(--include-color); }
-        .ev-btn.excluded { background: var(--exclude-color); text-decoration: line-through; opacity: 0.5; }
+        .form-box .register-link {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+        }
 
-        .tarot-card { background: #1a1a1a; border-radius: 10px; padding: 15px; text-align: center; border: 1px solid #333; }
-        .tarot-card img { width: 90px; height: 140px; margin-bottom: 10px; border-radius: 4px; }
+        .form-box .register-link a {
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+
+        .form-box .register-link a:hover {
+            color: var(--secondary-color);
+        }
+
+        /* ========== أنماط إضافية للأدوار ========== */
+        .role-extra-fields {
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .role-extra-fields.show {
+            display: block;
+        }
+
+        .file-upload-box {
+            border: 2px dashed #ccc;
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+            margin: 15px 0;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .file-upload-box:hover {
+            border-color: var(--primary-color);
+            background-color: rgba(10, 45, 94, 0.05);
+        }
+
+        .file-upload-box i {
+            font-size: 2rem;
+            color: var(--primary-color);
+            margin-bottom: 10px;
+        }
+
+        .file-upload-box p {
+            color: var(--light-text);
+            margin-bottom: 5px;
+        }
+
+        .file-upload-box small {
+            color: #888;
+            font-size: 0.8rem;
+        }
+
+        .file-preview {
+            margin-top: 10px;
+            display: none;
+        }
+
+        .file-preview img {
+            max-width: 100px;
+            max-height: 100px;
+            border-radius: 8px;
+            margin: 0 auto;
+        }
+
+        .developer-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+
+        .developer-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .developer-popup {
+            background: white;
+            border-radius: var(--border-radius);
+            padding: 2rem;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: var(--card-shadow);
+            animation: slideUp 0.3s ease;
+        }
+
+        .developer-popup h3 {
+            color: var(--primary-color);
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+
+        .close-popup {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: var(--light-text);
+            cursor: pointer;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideUp {
+            from { 
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to { 
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* تحسينات للتجاوب */
+        @media screen and (max-width: 850px) {
+            .animated-container {
+                width: 95%;
+                height: auto;
+            }
+        }
+
+        @media screen and (max-width: 650px) {
+            .form-box {
+                position: relative;
+                bottom: 0;
+                width: 100%;
+                height: 70%;
+                padding: 30px 20px;
+            }
+
+            .animated-container.active .form-box {
+                right: 0;
+                bottom: 30%;
+            }
+
+            .toggle-box::before {
+                left: 0;
+                top: -270%;
+                width: 100%;
+                height: 300%;
+                border-radius: 20vw;
+            }
+
+            .animated-container.active .toggle-box::before {
+                left: 0;
+                top: 70%;
+            }
+
+            .animated-container.active .toggle-panel.toggle-left {
+                left: 0;
+                top: -30%;
+            }
+
+            .toggle-panel {
+                width: 100%;
+                height: 30%;
+                padding: 20px;
+            }
+            .toggle-panel.toggle-left {
+                top: 0;
+            }
+            .toggle-panel.toggle-right {
+                right: 0;
+                bottom: -30%;
+            }
+
+            .animated-container.active .toggle-panel.toggle-right {
+                bottom: 0;
+            }
+        }
+
+        @media screen and (max-width: 400px) {
+            .form-box {
+                padding: 20px 15px;
+            }
+
+            .toggle-panel h1 {
+                font-size: 24px;
+            }
+        }
+
+        /* ========== قسم التصنيفات ========== */
+        .categories-section {
+            padding: var(--section-padding);
+            background-color: var(--white);
+        }
+
+        .section-title {
+            text-align: center;
+            margin-bottom: 3.5rem;
+            position: relative;
+        }
+
+        .section-title h2 {
+            font-size: 2.4rem;
+            color: var(--primary-color);
+            font-weight: 700;
+            display: inline-block;
+            margin-bottom: 1rem;
+        }
+
+        .section-title h2::after {
+            content: '';
+            position: absolute;
+            width: 80px;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+            bottom: -10px;
+            right: 50%;
+            transform: translateX(50%);
+            border-radius: 2px;
+        }
+
+        .section-title p {
+            color: var(--light-text);
+            font-size: 1.1rem;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .categories-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .category-card {
+            background: var(--white);
+            border-radius: var(--border-radius);
+            padding: 1.8rem 1.5rem;
+            box-shadow: var(--card-shadow);
+            transition: var(--transition);
+            border: 2px solid #f1f5f9;
+            text-align: center;
+            cursor: pointer;
+        }
+
+        .category-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 12px 25px rgba(0, 0, 0, 0.12);
+            border-color: var(--secondary-color);
+        }
+
+        .category-icon {
+            width: 70px;
+            height: 70px;
+            margin: 0 auto 1.2rem;
+            background: linear-gradient(135deg, rgba(10, 45, 94, 0.1), rgba(212, 167, 98, 0.1));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            color: var(--primary-color);
+        }
+
+        .category-card h3 {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .category-card p {
+            color: var(--light-text);
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+
+        /* ========== Hero Section ========== */
+        .hero-section {
+            background: linear-gradient(rgba(10, 45, 94, 0.88), rgba(10, 45, 94, 0.92)), url('https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80');
+            background-size: cover;
+            background-position: center;
+            color: var(--white);
+            padding: var(--section-padding);
+            text-align: center;
+        }
+
+        .hero-content {
+            max-width: 850px;
+            margin: 0 auto;
+        }
+
+        .hero-content h1 {
+            font-size: 3.3rem;
+            font-weight: 800;
+            line-height: 1.2;
+            margin-bottom: 1.5rem;
+        }
+
+        .hero-content p {
+            font-size: 1.3rem;
+            opacity: 0.92;
+            margin-bottom: 2.8rem;
+            max-width: 700px;
+            margin-right: auto;
+            margin-left: auto;
+        }
+
+        .search-container {
+            background: var(--white);
+            border-radius: var(--border-radius);
+            padding: 2.5rem;
+            box-shadow: var(--card-shadow);
+            margin-top: 3rem;
+        }
+
+        .search-filters {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 1.2rem;
+            margin-bottom: 1.5rem;
+        }
+
+        /* ===== تحسين عرض المحافظات: زر قابل للبحث + قائمة شبكية ===== */
+        .city-select-original {
+            display: none; /* نحتفظ بالـ select الأصلي للـ forms لكن نخفيه */
+        }
+
+        .city-select {
+            position: relative;
+            text-align: right;
+        }
+
+        .city-btn {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+            padding: 0.95rem 1rem;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            background: #fff;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .city-btn .dropdown-arrow { color: var(--light-text); }
+
+        .city-dropdown {
+            position: absolute;
+            right: 0;
+            top: calc(100% + 10px);
+            width: 360px;
+            max-width: calc(100vw - 40px);
+            background: var(--white);
+            border-radius: 12px;
+            box-shadow: 0 12px 30px rgba(0,0,0,0.12);
+            padding: 0.8rem;
+            z-index: 2000;
+            display: none;
+        }
+
+        .city-dropdown.open { display: block; }
+
+        .city-search input {
+            width: 100%;
+            padding: 0.7rem 0.9rem;
+            border: 1px solid #e6eef6;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            margin-bottom: 0.6rem;
+        }
+
+        .city-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0.45rem;
+            max-height: 280px;
+            overflow: auto;
+            padding-right: 4px;
+        }
+
+        .city-item {
+            text-align: right;
+            padding: 0.6rem 0.8rem;
+            border-radius: 8px;
+            background: linear-gradient(180deg, #fff, #fbfdff);
+            border: 1px solid #f1f5f9;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .city-item:hover,
+        .city-item.active {
+            background: linear-gradient(90deg, rgba(10,45,94,0.06), rgba(212,167,98,0.06));
+            border-color: var(--secondary-color);
+            color: var(--primary-color);
+        }
+
+        /* مجموعة الحي (تظهر بعد اختيار المحافظة) */
+        .neighborhood-group {
+            display: none;
+        }
+
+        .neighborhood-group.show {
+            display: block;
+        }
+
+        /* مجموعة الامتدادات/المناطق داخل الحي */
+        .area-group {
+            display: none;
+        }
+
+        .area-group.show {
+            display: block;
+        }
+
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .filter-group label {
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 0.6rem;
+            color: var(--primary-color);
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .filter-group select,
+        .filter-group input {
+            padding: 0.95rem 1rem;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            font-family: inherit;
+            font-size: 1rem;
+            transition: var(--transition);
+            background-color: var(--white);
+        }
+
+        .filter-group select:focus,
+        .filter-group input:focus {
+            outline: none;
+            border-color: var(--secondary-color);
+            box-shadow: 0 0 0 3px rgba(212, 167, 98, 0.15);
+        }
+
+        .search-actions {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .btn-secondary {
+            background-color: transparent;
+            color: var(--primary-color);
+            border: 2px solid var(--primary-color);
+        }
+
+        .btn-secondary:hover {
+            background-color: rgba(10, 45, 94, 0.05);
+            transform: translateY(-2px);
+        }
+
+        /* ========== باقي أنماط الموقع ========== */
+        .featured-properties {
+            padding: var(--section-padding);
+            background-color: var(--light-bg);
+        }
+
+        .properties-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(330px, 1fr));
+            gap: 2.2rem;
+        }
+
+        .property-card {
+            background: var(--white);
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            box-shadow: var(--card-shadow);
+            transition: var(--transition);
+            border: 1px solid #f1f5f9;
+        }
+
+        .property-card:hover {
+            transform: translateY(-12px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.12);
+        }
+
+        .property-img {
+            height: 220px;
+            width: 100%;
+            object-fit: cover;
+            transition: transform 0.6s ease;
+        }
+
+        .property-card:hover .property-img {
+            transform: scale(1.05);
+        }
+
+        .property-content {
+            padding: 1.8rem;
+        }
+
+        .property-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+        }
+
+        .property-header h3 {
+            font-size: 1.35rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            line-height: 1.4;
+        }
+
+        .property-price {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--accent-color);
+            white-space: nowrap;
+        }
+
+        .property-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1.2rem;
+            margin: 1.5rem 0;
+            padding: 1.2rem 0;
+            border-top: 1px solid #e2e8f0;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            font-size: 0.9rem;
+            color: var(--light-text);
+        }
+
+        .meta-item i {
+            color: var(--secondary-color);
+        }
+
+        .property-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .property-type {
+            background-color: rgba(10, 45, 94, 0.08);
+            color: var(--primary-color);
+            padding: 0.4rem 1rem;
+            border-radius: 50px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .property-link {
+            color: var(--secondary-color);
+            font-weight: 700;
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .property-link:hover {
+            gap: 10px;
+            color: var(--primary-color);
+        }
+
+        .main-footer {
+            background-color: var(--primary-color);
+            color: var(--white);
+            padding: 4rem 0 2rem;
+        }
+
+        .footer-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 3rem;
+            margin-bottom: 3.5rem;
+        }
+
+        .footer-column h4 {
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 1.8rem;
+            color: var(--secondary-color);
+            position: relative;
+            padding-bottom: 0.8rem;
+        }
+
+        .footer-column h4::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            width: 50px;
+            height: 3px;
+            background-color: var(--accent-color);
+            border-radius: 2px;
+        }
+
+        .footer-column ul li {
+            margin-bottom: 0.9rem;
+        }
+
+        .footer-column a {
+            opacity: 0.85;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .footer-column a:hover {
+            opacity: 1;
+            color: var(--secondary-color);
+            transform: translateX(-5px);
+        }
+
+        .footer-bottom {
+            text-align: center;
+            padding-top: 2.5rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            font-size: 0.95rem;
+            opacity: 0.8;
+        }
+
+        /* ========== Responsive ========== */
+        @media (max-width: 1100px) {
+            .main-nav ul {
+                gap: 1rem;
+            }
+        }
+
+        @media (max-width: 992px) {
+            .header-content {
+                flex-wrap: wrap;
+                gap: 1rem;
+            }
+            
+            .main-nav {
+                order: 3;
+                width: 100%;
+                margin-top: 1rem;
+            }
+            
+            .main-nav ul {
+                justify-content: center;
+                flex-wrap: wrap;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .hero-content h1 {
+                font-size: 2.3rem;
+            }
+            
+            .categories-grid {
+                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+                gap: 1rem;
+            }
+            
+            .user-menu {
+                flex-direction: column;
+                gap: 0.5rem;
+                align-items: flex-end;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .categories-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .main-nav ul {
+                gap: 0.5rem;
+            }
+            
+            .main-nav a {
+                font-size: 0.85rem;
+            }
+        }
         
-        .map-img { width: 100%; max-height: 400px; object-fit: contain; border-radius: 8px; margin-bottom: 20px; border: 1px solid #444; background: #000; }
+        .logo-img {
+            height: 80px;
+            width: 150px;
+            margin-left: 30px;
+        }
         
-        .info-list { list-style: none; padding: 0; }
-        .info-list li { background: #2a2a2a; margin-bottom: 8px; padding: 12px; border-radius: 6px; border-inline-start: 4px solid var(--accent-color); line-height: 1.6; }
-        
-        .result-card { background:#1a1a1a; padding:20px; margin-top:15px; border-radius:10px; border-inline-start: 5px solid var(--accent-color); position: relative; }
+        .hidden {
+            display: none;
+        }
     </style>
 </head>
 <body>
+    <!-- الموقع الرئيسي (مُعرض مباشرة) -->
+    <div class="main-website" id="mainWebsite">
+        <!-- Header -->
+        <header class="main-header">
+            <div class="container header-content">
+                <a href="#" class="logo">
+                    <img src="images/logo.png" alt="HOME LAND Logo" class="logo-img">
+                </a>
+                <nav class="main-nav">
+                    <ul>
+                        <li><a href="#"><i class="fas fa-home"></i> الرئيسية</a></li>
+                        <li><a href="#"><i class="fas fa-user-tie"></i>المديرين</a></li>
+                        <li><a href="#"><i class="fas fa-bullhorn"></i> الرعاية والإعلانات</a></li>
+                        <li><a href="#"><i class="fas fa-map-marked-alt"></i> خريطة الموقع</a></li>
+                        <li><a href="#"><i class="fas fa-plus-circle"></i> أضف عقارك</a></li>
+                    </ul>
+                </nav>
+                <div class="user-menu">
+                    <span class="user-welcome" id="userWelcome">مرحباً بك في HOME LAND</span>
+                    <button class="login-header-btn" id="loginHeaderBtn">
+                        <i class="fas fa-sign-in-alt"></i> تسجيل الدخول
+                    </button>
+                    <button class="logout-btn" id="logoutBtn" style="display: none;">
+                        <i class="fas fa-sign-out-alt"></i> تسجيل الخروج
+                    </button>
+                </div>
+            </div>
+        </header>
 
-    <div id="sidebar">
-        <h2 style="color: var(--accent-color); text-align: center; letter-spacing: 1px;">PHASMO ULTRA</h2>
-        <button class="nav-btn active" onclick="showTab('evidence-tab', this)">🔍 كاشف الأدلة الشامل</button>
-        <button class="nav-btn" onclick="showTab('ghosts-tab', this)">📜 موسوعة الأشباح</button>
-        <button class="nav-btn" onclick="showTab('cards-tab', this)">🃏 كروت التاروت</button>
-        <button class="nav-btn" onclick="showTab('maps-tab', this)">🗺️ مخططات الخرائط</button>
-        <button class="nav-btn" onclick="resetEvidence()" style="margin-top: auto; color: #ff8888;">إعادة ضبط الأدلة</button>
+        <!-- Hero Section -->
+        <section class="hero-section">
+            <div class="container hero-content">
+                <h1>اكتشف عقار أحلامك مع </h1>
+                <h1>Home Land</h1>
+                <p>أكبر منصة عقارية في الشرق الأوسط توفر لك آلاف العروض الحصرية للبيع والإيجار</p>
+                <div class="search-container">
+                    <div class="search-filters">
+                        <div class="filter-group">
+                            <label for="city"><i class="fas fa-map-marker-alt"></i> المحافظة</label>
+                            <select id="city" class="city-select-original">
+                                <option>كل المحافظات</option>
+                                <option>السادات</option>
+                                <option>أكتوبر الجديدة</option>
+                                <option>أسوان الجديدة</option>
+                                <option>15 مايو</option>
+                                <option>العبور الجديدة</option>
+                                <option>العاشر من رمضان</option>
+                                <option>الشروق</option>
+                                <option>السادس من أكتوبر</option>
+                                <option>بدر</option>
+                                <option>المنيا الجديدة</option>
+                                <option>المنصورة الجديدة</option>
+                                <option>العلمين الجديدة</option>
+                                <option>سفنكس الجديدة</option>
+                                <option>دمياط الجديدة</option>
+                                <option>بني سويف الجديدة</option>
+                                <option>برج العرب الجديدة</option>
+                                <option>ناصر الجديدة - غرب اسوان</option>
+                                <option>قنا الجديدة</option>
+                                <option>سوهاج الجديدة</option>
+                                <option>التجمع</option>
+                                <option>الإسكندرية</option>
+                                <option>الإسماعيلية</option>
+                                <option>أسوان</option>
+                                <option>أسيوط</option>
+                                <option>الأقصر</option>
+                                <option>البحر الأحمر</option>
+                                <option>البحيرة</option>
+                                <option>بني سويف</option>
+                                <option>بورسعيد</option>
+                                <option>جنوب سيناء</option>
+                                <option>الجيزة</option>
+                                <option>الدقهلية</option>
+                                <option>دمياط</option>
+                                <option>سوهاج</option>
+                                <option>السويس</option>
+                                <option>الشرقية</option>
+                                <option>شمال سيناء</option>
+                                <option>الغربية</option>
+                                <option>الفيوم</option>
+                                <option>القاهرة</option>
+                                <option>القليوبية</option>
+                                <option>قنا</option>
+                                <option>كفر الشيخ</option>
+                                <option>مطروح</option>
+                                <option>المنوفية</option>
+                                <option>المنيا</option>
+                                <option>الوادي الجديد</option>
+                            </select>
+
+                            <!-- عنصر اختيار حديث للمحافظات (زر + قائمة قابلة للبحث والشبكة) -->
+                            <div class="city-select" id="citySelect">
+                                <button type="button" class="city-btn" id="cityBtn"><span id="cityBtnText">كل المحافظات</span> <i class="fas fa-chevron-left dropdown-arrow"></i></button>
+                                <div class="city-dropdown" id="cityDropdown" aria-hidden="true">
+                                    <div class="city-search">
+                                        <input type="search" id="citySearch" placeholder="ابحث عن المحافظة...">
+                                    </div>
+                                    <div class="city-grid" id="cityGrid">
+                                        <!-- سيتم ملؤها بواسطة JavaScript من الـ select الأصلي -->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="filter-group neighborhood-group" id="neighborhoodGroup">
+                            <label for="neighborhood"><i class="fas fa-map-pin"></i> الحي / المنطقة</label>
+                            <select id="neighborhood">
+                                <option>اختر المحافظة أولاً</option>
+                            </select>
+                        </div>
+                        <div class="filter-group">
+                            <label for="type"><i class="fas fa-tag"></i> نوع العقار</label>
+                            <select id="type">
+                                <option>اختر قسم...</option>
+                                <option>شقق للبيع</option>
+                                <option>شقق للإيجار</option>
+                                <option>أراضي</option>
+                                <option>فيلات</option>
+                            </select>
+                        </div>
+                        <div class="filter-group">
+                            <label for="min-price"><i class="fas fa-coins"></i> السعر من (ج.م)</label>
+                            <input type="number" id="min-price" placeholder="أدنى سعر">
+                        </div>
+                        <div class="filter-group">
+                            <label for="max-price"><i class="fas fa-coins"></i> السعر إلى (ج.م)</label>
+                            <input type="number" id="max-price" placeholder="أعلى سعر">
+                        </div>
+                    </div>
+                    <div class="search-actions">
+                        <button class="btn btn-primary"><i class="fas fa-search"></i> بحث متقدم</button>
+                        <button class="btn btn-secondary"><i class="fas fa-redo"></i> مسح الفلاتر</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Categories Section -->
+        <section class="categories-section">
+            <div class="container">
+                <div class="section-title">
+                    <h2>تصفح حسب التصنيف</h2>
+                    <p>اختر من بين مجموعة واسعة من التصنيفات العقارية التي تناسب احتياجاتك</p>
+                </div>
+                <div class="categories-grid">
+                    <!-- Category 1 -->
+                    <div class="category-card">
+                        <div class="category-icon">
+                            <i class="fas fa-building"></i>
+                        </div>
+                        <h3>شقق للبيع</h3>
+                        <p>شقق بمختلف المساحات والأسعار في أفضل المناطق</p>
+                    </div>
+                    
+                    <!-- Category 2 -->
+                    <div class="category-card">
+                        <div class="category-icon">
+                            <i class="fas fa-hotel"></i>
+                        </div>
+                        <h3>دوبلكس</h3>
+                        <p>شقق دوبلكس فاخرة بتشطيبات عالية الجودة</p>
+                    </div>
+                    
+                    <!-- Category 3 -->
+                    <div class="category-card">
+                        <div class="category-icon">
+                            <i class="fas fa-tractor"></i>
+                        </div>
+                        <h3>أراضي زراعية</h3>
+                        <p>أراضي زراعية خصبة بمساحات مختلفة للاستثمار</p>
+                    </div>
+                    
+                    <!-- Category 4 -->
+                    <div class="category-card">
+                        <div class="category-icon">
+                            <i class="fas fa-vector-square"></i>
+                        </div>
+                        <h3>أراضي مباني</h3>
+                        <p>أراضي سكنية وتجارية صالحة للبناء الفوري</p>
+                    </div>
+                    
+                    <!-- Category 5 -->
+                    <div class="category-card">
+                        <div class="category-icon">
+                            <i class="fas fa-igloo"></i>
+                        </div>
+                        <h3>فلل وقصور</h3>
+                        <p>فلل مستقلة وقصور فاخرة بمواصفات خاصة</p>
+                    </div>
+                    
+                    <!-- Category 6 -->
+                    <div class="category-card">
+                        <div class="category-icon">
+                            <i class="fas fa-crown"></i>
+                        </div>
+                        <h3>عقارات مميزة</h3>
+                        <p>عروض حصرية ومميزة من أفضل المشاريع العقارية</p>
+                    </div>
+                    
+                    <!-- Category 7 -->
+                    <div class="category-card">
+                        <div class="category-icon">
+                            <i class="fas fa-project-diagram"></i>
+                        </div>
+                        <h3>مشاريع</h3>
+                        <p>مشاريع سكنية وتجارية قيد الإنشاء والتسليم</p>
+                    </div>
+                    
+                    <!-- Category 8 -->
+                    <div class="category-card">
+                        <div class="category-icon">
+                            <i class="fas fa-umbrella-beach"></i>
+                        </div>
+                        <h3>شاليهات</h3>
+                        <p>شاليهات ومنتجعات في أفضل المناطق السياحية</p>
+                    </div>
+                    
+                    <!-- Category 9 -->
+                    <div class="category-card">
+                        <div class="category-icon">
+                            <i class="fas fa-store"></i>
+                        </div>
+                        <h3>محلات تجارية</h3>
+                        <p>محلات ومكاتب إدارية في مواقع مميزة</p>
+                    </div>
+                    
+                    <!-- Category 10 -->
+                    <div class="category-card">
+                        <div class="category-icon">
+                            <i class="fas fa-city"></i>
+                        </div>
+                        <h3>عمارات</h3>
+                        <p>عمارات كاملة للبيع أو الاستثمار</p>
+                    </div>
+                    
+                    <!-- Category 11 -->
+                    <div class="category-card">
+                        <div class="category-icon">
+                            <i class="fas fa-prescription-bottle"></i>
+                        </div>
+                        <h3>صيدليات</h3>
+                        <p>صيدليات للبيع أو الإيجار في مواقع استراتيجية</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Featured Properties -->
+        <section class="featured-properties">
+            <div class="container">
+                <div class="section-title">
+                    <h2>عروض مميزة تناسبك</h2>
+                    <p>أبرز الفرص العقارية المختارة بعناية</p>
+                </div>
+                <div class="properties-grid">
+                    <!-- Property 1 -->
+                    <article class="property-card">
+                        <img src="https://images.unsplash.com/photo-1560518883-ce09059eeffa?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80" alt="شقة فاخرة" class="property-img">
+                        <div class="property-content">
+                            <div class="property-header">
+                                <h3>شقة فاخرة للبيع في التجمع الخامس</h3>
+                                <div class="property-price">3,450,000 ج.م</div>
+                            </div>
+                            <p>شقة ٣ غرف بمساحة ١٦٠ م²، تشطيب سوبر لوكس، مطلوب عرب ٢٠٢٤.</p>
+                            <div class="property-meta">
+                                <div class="meta-item"><i class="fas fa-vector-square"></i> 160 م²</div>
+                                <div class="meta-item"><i class="fas fa-bed"></i> 3 غرف</div>
+                                <div class="meta-item"><i class="fas fa-bath"></i> 3 حمام</div>
+                                <div class="meta-item"><i class="fas fa-car"></i> جراج</div>
+                            </div>
+                            <div class="property-footer">
+                                <span class="property-type">شقة للبيع</span>
+                                <a href="#" class="property-link">عرض التفاصيل <i class="fas fa-arrow-left"></i></a>
+                            </div>
+                        </div>
+                    </article>
+                    <!-- Property 2 -->
+                    <article class="property-card">
+                        <img src="https://images.unsplash.com/photo-1613490493576-7fde63acd811?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80" alt="فيلا" class="property-img">
+                        <div class="property-content">
+                            <div class="property-header">
+                                <h3>فيلا راقية في الساحل الشمالي</h3>
+                                <div class="property-price">8,900,000 ج.م</div>
+                            </div>
+                            <p>فيلا دوبلكس بمساحة ٣٠٠ م² على بعد ٥٠٠ م من البحر، حديقة خاصة وحمام سباحة.</p>
+                            <div class="property-meta">
+                                <div class="meta-item"><i class="fas fa-vector-square"></i> 300 م²</div>
+                                <div class="meta-item"><i class="fas fa-bed"></i> 5 غرف</div>
+                                <div class="meta-item"><i class="fas fa-bath"></i> 4 حمام</div>
+                                <div class="meta-item"><i class="fas fa-swimming-pool"></i> حمام سباحة</div>
+                            </div>
+                            <div class="property-footer">
+                                <span class="property-type">فيلا للبيع</span>
+                                <a href="#" class="property-link">عرض التفاصيل <i class="fas fa-arrow-left"></i></a>
+                            </div>
+                        </div>
+                    </article>
+                    <!-- Property 3 -->
+                    <article class="property-card">
+                        <img src="https://images.unsplash.com/photo-1560518883-ce09059eeffa?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80" alt="أرض" class="property-img">
+                        <div class="property-content">
+                            <div class="property-header">
+                                <h3>قطعة أرض سكنية في الشيخ زايد</h3>
+                                <div class="property-price">1,650,000 ج.م</div>
+                            </div>
+                            <p>قطعة أرض ٥٠٠ م² في منطقة سكنية هادئة، مرخصة للبناء فوراً، خدمات متكاملة.</p>
+                            <div class="property-meta">
+                                <div class="meta-item"><i class="fas fa-vector-square"></i> 500 م²</div>
+                                <div class="meta-item"><i class="fas fa-map"></i> شارع 20 م</div>
+                                <div class="meta-item"><i class="fas fa-tint"></i> صرف صحي</div>
+                                <div class="meta-item"><i class="fas fa-bolt"></i> كهرباء</div>
+                            </div>
+                            <div class="property-footer">
+                                <span class="property-type">أرض للبيع</span>
+                                <a href="#" class="property-link">عرض التفاصيل <i class="fas fa-arrow-left"></i></a>
+                            </div>
+                        </div>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="main-footer">
+            <div class="container">
+                <div class="footer-grid">
+                    <div class="footer-column">
+                        <h4>عن HOME LAND</h4>
+                        <p style="opacity: 0.85; margin-bottom: 1.5rem;">المنصة العقارية الرائدة التي تربط بين البائعين والمشترين بثقة وشفافية منذ 2023.</p>
+                    </div>
+                    <div class="footer-column">
+                        <h4>روابط سريعة</h4>
+                        <ul>
+                            <li><a href="#"><i class="fas fa-chevron-left"></i> الشروط والأحكام</a></li>
+                            <li><a href="#"><i class="fas fa-chevron-left"></i> سياسة الخصوصية</a></li>
+                            <li><a href="#"><i class="fas fa-chevron-left"></i> الأسئلة الشائعة</a></li>
+                        </ul>
+                    </div>
+                    <div class="footer-column">
+                        <h4>التصنيفات</h4>
+                        <ul>
+                            <li><a href="#"><i class="fas fa-chevron-left"></i> شقق للبيع في القاهرة</a></li>
+                            <li><a href="#"><i class="fas fa-chevron-left"></i> فلل للبيع في الجيزة</a></li>
+                            <li><a href="#"><i class="fas fa-chevron-left"></i> محلات للايجار</a></li>
+                        </ul>
+                    </div>
+                    <div class="footer-column">
+                        <h4>اتصل بنا</h4>
+                        <ul>
+                            <li><a href="tel:+20223456789"><i class="fas fa-phone"></i> 0020223456789+</a></li>
+                            <li><a href="mailto:info@home-land.com"><i class="fas fa-envelope"></i> info@home-land.com</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="footer-bottom">
+                    <p>© 2025 <strong>HOME LAND</strong>. جميع الحقوق محفوظة.</p>
+                </div>
+            </div>
+        </footer>
     </div>
 
-    <div id="main-view">
-        <div id="evidence-tab" class="content-section active">
-            <h2>محرك التحديد والتحليل</h2>
-            <div class="evidence-grid">
-                <div class="ev-btn" data-val="EMF 5">EMF 5</div>
-                <div class="ev-btn" data-val="Fingerprints">Ultraviolet</div>
-                <div class="ev-btn" data-val="Ghost Writing">Writing</div>
-                <div class="ev-btn" data-val="Freezing">Freezing</div>
-                <div class="ev-btn" data-val="Ghost Orb">Orbs</div>
-                <div class="ev-btn" data-val="Spirit Box">Spirit Box</div>
-                <div class="ev-btn" data-val="DOTS">DOTS</div>
+    <!-- شاشة تسجيل الدخول المتحركة -->
+    <div class="animated-login-overlay" id="loginOverlay">
+        <div class="animated-container" id="animatedContainer">
+            <!-- تسجيل الدخول -->
+            <div class="form-box login">
+                <form id="loginForm">
+                    <h2><i class="fas fa-home"></i> HOME LAND</h2>
+                    <p>سجل الدخول للوصول إلى أفضل العروض العقارية</p>
+                    
+                    <div class="input-box">
+                        <input type="email" id="loginEmail" placeholder="البريد الإلكتروني" required>
+                        <i class="fas fa-envelope"></i>
+                    </div>
+                    
+                    <div class="input-box">
+                        <input type="password" id="loginPassword" placeholder="كلمة المرور" required>
+                        <i class="fas fa-lock"></i>
+                    </div>
+                    
+                    <div class="forgot-link">
+                        <a href="#" id="forgotPassword">نسيت كلمة المرور؟</a>
+                    </div>
+                    
+                    <button type="submit" class="animated-btn">
+                        <i class="fas fa-sign-in-alt"></i> تسجيل الدخول
+                    </button>
+                    
+                    <div class="social-icons">
+                        <a href="#"><i class="fab fa-google"></i></a>
+                        <a href="#"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                    </div>
+                    
+                    <div class="register-link">
+                        ليس لديك حساب؟ <a href="#" id="showRegisterLink">سجل الآن</a>
+                    </div>
+                </form>
             </div>
-            <div id="evidence-results"></div>
-        </div>
-
-        <div id="ghosts-tab" class="content-section">
-            <div class="list-container">
-                <div class="side-column">
-                    <input type="text" class="search-box" id="global-search" placeholder="ابحث عن شبح، سرعة، أو قدرة..." onkeyup="renderGhostList(this.value)">
-                    <div id="ghost-list"></div>
+            
+            <!-- التسجيل -->
+            <div class="form-box register">
+                <form id="registerForm">
+                    <h2><i class="fas fa-user-plus"></i> إنشاء حساب جديد</h2>
+                    
+                    <div class="input-box">
+                        <input type="text" id="registerName" placeholder="الاسم الكامل" required>
+                        <i class="fas fa-user"></i>
+                    </div>
+                    
+                    <div class="input-box">
+                        <input type="email" id="registerEmail" placeholder="البريد الإلكتروني" required>
+                        <i class="fas fa-envelope"></i>
+                    </div>
+                    
+                    <div class="input-box">
+                        <input type="password" id="registerPassword" placeholder="كلمة المرور" required>
+                        <i class="fas fa-lock"></i>
+                    </div>
+                    
+                    <div class="input-box">
+                        <input type="tel" id="registerMobile" placeholder="رقم الموبايل" required>
+                        <i class="fas fa-mobile-alt"></i>
+                    </div>
+                    
+                    <!-- حقل الصفة (إضافي) -->
+                    <div class="input-box">
+                        <select id="registerRole" style="width:100%; padding:13px 20px; background:#eee; border:none; border-radius:8px; font-size:16px; color:#333; text-align:right;" required>
+                            <option value="">اختر الصفة</option>
+                            <option value="مالك">مالك</option>
+                            <option value="وسيط">وسيط</option>
+                            <option value="مطور">مطور</option>
+                            <option value="شركة">شركة</option>
+                        </select>
+                        <i class="fas fa-id-badge"></i>
+                    </div>
+                    
+                    <!-- حقول إضافية للوسيط/شركة -->
+                    <div id="mediatorFields" class="role-extra-fields">
+                        <div class="input-box">
+                            <select id="mediatorType" style="width:100%; padding:13px 20px; background:#eee; border:none; border-radius:8px; font-size:16px; color:#333; text-align:right;" required>
+                                <option value="">نوع الوسيط</option>
+                                <option value="وسيط حر">وسيط حر</option>
+                                <option value="شركة">شركة</option>
+                            </select>
+                            <i class="fas fa-briefcase"></i>
+                        </div>
+                        
+                        <div id="companyFields" class="role-extra-fields">
+                            <div class="input-box">
+                                <input type="text" id="companyName" placeholder="اسم الشركة">
+                                <i class="fas fa-building"></i>
+                            </div>
+                            
+                            <div class="file-upload-box" id="companyLogoUpload">
+                                <i class="fas fa-cloud-upload-alt"></i>
+                                <p>اضغط لرفع شعار الشركة</p>
+                                <small>الحجم الأقصى: 5MB (الصيغ المدعومة: JPG, PNG)</small>
+                                <input type="file" id="companyLogo" accept="image/*" style="display: none;">
+                                <div class="file-preview" id="logoPreview"></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- نافذة منبثقة لمطور -->
+                    <div class="developer-overlay" id="developerOverlay">
+                        <div class="developer-popup">
+                            <button class="close-popup" id="closeDeveloperPopup">&times;</button>
+                            <h3>معلومات الشركة - مطور</h3>
+                            <div class="input-box">
+                                <input type="text" id="developerCompanyName" placeholder="اسم الشركة" required>
+                                <i class="fas fa-building"></i>
+                            </div>
+                            <div class="input-box">
+                                <input type="text" id="developerCompanyAddress" placeholder="عنوان الشركة" required>
+                                <i class="fas fa-map-marker-alt"></i>
+                            </div>
+                            <button type="button" class="animated-btn" id="saveDeveloperInfo" style="margin-top: 20px;">
+                                <i class="fas fa-save"></i> حفظ المعلومات
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <button type="submit" class="animated-btn">
+                        <i class="fas fa-user-plus"></i> إنشاء حساب
+                    </button>
+                    
+                    <div class="register-link">
+                        لديك حساب بالفعل؟ <a href="#" id="showLoginLink">سجل الدخول</a>
+                    </div>
+                </form>
+            </div>
+            
+            <!-- التبديل المتحرك -->
+            <div class="toggle-box">
+                <div class="toggle-panel toggle-left">
+                    <h1>مرحباً بعودتك!</h1>
+                    <p>سجل الدخول للوصول إلى حسابك ومتابعة عروضك المفضلة</p>
                 </div>
-                <div id="ghost-details" class="details-column">اختر شبحاً لعرض الملف التقني...</div>
-            </div>
-        </div>
-
-        <div id="cards-tab" class="content-section">
-            <div class="cards-grid" id="cards-container" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 15px;"></div>
-        </div>
-
-        <div id="maps-tab" class="content-section">
-            <div class="list-container">
-                <div class="side-column" id="maps-list"></div>
-                <div id="map-details" class="details-column">اختر خريطة لعرض المخطط...</div>
+                <div class="toggle-panel toggle-right">
+                    <h1>مرحباً بك!</h1>
+                    <p>انضم إلى مجتمع HOME LAND وابدأ رحلتك العقارية اليوم</p>
+                    <!-- زر إضافي للانتقال إلى تسجيل الدخول من الشاشة الزرقاء -->
+                    <button class="blue-screen-login-btn" id="blueScreenLoginBtn">
+                        <i class="fas fa-sign-in-alt"></i> تسجيل الدخول
+                    </button>
+                </div>
             </div>
         </div>
     </div>
 
     <script>
-        const ghosts = [
-            { name: "Spirit", speed: "1.7 m/s", evidence: ["EMF 5", "Spirit Box", "Ghost Writing"], info: ["وقت الكروسفكس بعد استخدام السِمج: 3:10", "شبح متوازن بدون سلوك فريد أثناء الصيد"] },
-            { name: "Wraith", speed: "1.7 m/s", evidence: ["EMF 5", "Spirit Box", "DOTS"], info: ["لا يترك آثار أقدام بالملح", "يمكنه التنقل مباشرة إلى اللاعب", "يتأذى بقوة من السِمج"] },
-            { name: "Phantom", speed: "1.7 m/s", evidence: ["Spirit Box", "Fingerprints", "DOTS"], info: ["لا يظهر بوضوح في الصور", "يختفي كثيرًا أثناء الصيد", "النظر له يقلل العقل بسرعة"] },
-            { name: "Poltergeist", speed: "1.7 m/s", evidence: ["Spirit Box", "Fingerprints", "Ghost Writing"], info: ["إذا رمى عدة أشياء دفعة واحدة فهو بولتر", "أثناء الصيد يرمي الأشياء لمسافات بعيدة جدًا", "تفريغ الغرفة من الأغراض يضعفه"] },
-            { name: "Banshee", speed: "1.7 m/s", evidence: ["Fingerprints", "Ghost Orb", "DOTS"], info: ["صرخة فريدة في Parabolic Mic", "غالبًا يغني في الـ Ghost Events", "يستهدف لاعبًا واحدًا فقط"] },
-            { name: "Jinn", speed: "1.7 - 2.5 m/s", evidence: ["EMF 5", "Fingerprints", "Freezing"], info: ["سرعته عادية، لكن إذا رآك من بعيد يصبح سريعًا جدًا", "إذا اقترب منك يعود للسرعة الطبيعية", "لا يستطيع استخدام قدرته بدون كهرباء"] },
-            { name: "Mare", speed: "1.7 m/s", evidence: ["Spirit Box", "Ghost Orb", "Ghost Writing"], info: ["لا يشغل أي ضوء، ويطفئ الإضاءة فور تشغيلها", "يفضل الظلام ويصطاد مبكرًا فيه"] },
-            { name: "Revenant", speed: "1.1 - 3.0 m/s", evidence: ["Ghost Orb", "Ghost Writing", "Freezing"], info: ["سرعته بطيئة جدًا إذا لم يراك (≈1)", "يصبح سريعًا جدًا عند رؤيتك (≈3)", "السِمج يبطئه بوضوح"] },
-            { name: "Shade", speed: "1.7 m/s", evidence: ["EMF 5", "Ghost Writing", "Freezing"], info: ["لن يصطاد إلا إذا كنت بعيداً عنه", "لا يفعل أحداث في نفس الغرفة", "قد يحرق كروسفكسين بنفس المكان", "عند اشعال دائرة الاستدعاء يمكنه ان يظهر كظل"] },
-            { name: "Demon", speed: "1.7 m/s", evidence: ["Fingerprints", "Ghost Writing", "Freezing"], info: ["وقت الكروسفكس بعد السِمج: 1:00", "يصطاد مبكرًا جدًا وعدواني بشكل ملحوظ"] },
-            { name: "Yurei", speed: "1.7 m/s", evidence: ["Ghost Orb", "Freezing", "DOTS"], info: ["يغلق الأبواب بقوة ويقلل 15% من العقل عند الإغلاق", "يمكنه فتح بابين بنفس الوقت", "السِمج يقيده في غرفته"] },
-            { name: "Oni", speed: "1.7 m/s", evidence: ["EMF 5", "Freezing", "DOTS"], info: ["يظهر كثيرًا ونادرًا ما يختفي", "أحداثه قوية وواضحة ولا يفعل أحداث هوائية"] },
-            { name: "Yokai", speed: "1.7 m/s", evidence: ["Spirit Box", "Ghost Orb", "DOTS"], info: ["يصبح عدوانيًا عند التحدث بقربه", "سمعه ضعيف أثناء الصيد"] },
-            { name: "Hantu", speed: "1.4 - 2.7 m/s", evidence: ["Fingerprints", "Ghost Orb", "Freezing"], info: ["سريع جدًا في الأماكن الباردة وبطيء في الدافئة", "يمكن رؤية أنفاسه في الصيد", "لا يمكنه فتح مفتاح الضوء الرئيسي"] },
-            { name: "Goryo", speed: "1.7 m/s", evidence: ["EMF 5", "Fingerprints", "DOTS"], info: ["لا يغير غرفته أبدًا، والـ DOTS يظهر فقط بالكاميرا", "لا يمكنك ابدا معرفته الا باستبعاد باقي الاشباح"] },
-            { name: "Myling", speed: "1.7 m/s", evidence: ["EMF 5", "Fingerprints", "Ghost Writing"], info: ["خطواته لا تُسمع إلا عند قرب شديد", "إذا انطفأ الكشاف قبل سماع الخطوات فهو غالباً Myling"] },
-            { name: "Onryo", speed: "1.7 m/s", evidence: ["Spirit Box", "Ghost Orb", "Freezing"], info: ["الشموع تحمي من الصيد", "إذا انطفأت 3 شمعات متتالية يمكنه الصيد", "يتجاهل الكروسفكس بوجود الشموع"] },
-            { name: "The Twins", speed: "1.5 / 1.9 m/s", evidence: ["EMF 5", "Spirit Box", "Freezing"], info: ["قارن بين صيدين: صيد سريع وصيد بطيء", "نشاط مزدوج في أماكن مختلفة"] },
-            { name: "Raiju", speed: "1.7 - 2.5 m/s", evidence: ["EMF 5", "Ghost Orb", "DOTS"], info: ["يصبح أسرع قرب الأجهزة الإلكترونية", "إذا فتحت كشافك وازداد تسارعه فهو Raiju"] },
-            { name: "Obake", speed: "1.7 m/s", evidence: ["EMF 5", "Fingerprints", "Ghost Orb"], info: ["يغير شكله أثناء الصيد، وبصماته تختفي بسرعة", "بصمة 6 أصابع أحيانًا"] },
-            { name: "The Mimic", speed: "Variable", evidence: ["Spirit Box", "Fingerprints", "Freezing"], info: ["لديه Ghost Orbs دائمًا لكنها ليست حقيقية", "يقلد سلوك أشباح أخرى"] },
-            { name: "Moroi", speed: "1.5 - 2.25 m/s", evidence: ["Spirit Box", "Ghost Writing", "Freezing"], info: ["سرعته تعتمد على العقل (عقل منخفض = سريع جداً)", "إذا رآك تزداد سرعته أكثر"] },
-            { name: "Deogen", speed: "0.4 - 3.0 m/s", evidence: ["Spirit Box", "Ghost Writing", "DOTS"], info: ["يعرف مكانك دائماً ولا يمكن الاختباء منه", "يبطئ جدًا عند الاقتراب (0.4)", "النجاة بالدوران حول طاولة أو جسم"] },
-            { name: "Thaye", speed: "1.0 - 2.75 m/s", evidence: ["Ghost Writing", "Ghost Orb", "DOTS"], info: ["أول صيد سريع جداً ثم يبرد ويصبح أبطأ", "إذا بقيت في مجال رؤيته أثناء الصيد يزداد نشاطه"] },
-            { name: "Obambo", speed: "1.7 m/s", evidence: ["EMF 5", "Spirit Box", "Fingerprints"], info: ["يتفاعل بقوة مع الدمى (Dolls / Teddy)", "أثناء الصيد يغيّر اتجاهه فجأة وصوته متقطع في الـ Parabolic"] },
-            { name: "Dayan", speed: "1.5 - 2.3 m/s", evidence: ["Ghost Writing", "Freezing", "DOTS"], info: ["يعتمد على الضوء: في الأنوار مشغلة يصبح أبطأ", "في الظلام يسرع ويصطاد مبكرًا ويطفئ الشموع فورًا"] },
-            { name: "Gallu", speed: "1.7 - 2.6 m/s", evidence: ["EMF 5", "Ghost Orb", "Freezing"], info: ["يتغذى على الخوف: كل Ghost Event يقلل العقل أكثر من الطبيعي", "يصبح أسرع كلما نظرت إليه أثناء الصيد، وتجاهله يقلل عدوانيته"] }
-        ];
+        document.addEventListener('DOMContentLoaded', function() {
+            const loginOverlay = document.getElementById('loginOverlay');
+            const mainWebsite = document.getElementById('mainWebsite');
+            const loginHeaderBtn = document.getElementById('loginHeaderBtn');
+            const logoutBtn = document.getElementById('logoutBtn');
+            const userWelcome = document.getElementById('userWelcome');
+            const animatedContainer = document.getElementById('animatedContainer');
+            const blueScreenLoginBtn = document.getElementById('blueScreenLoginBtn');
 
-        const maps = [
-            { name: "6 Tanglewood Drive", size: "Small", rooms: 11, floors: 2, file: "Tanglewood.png", info: "الخريطة الكلاسيكية، مخرج واحد وقبو." },
-            { name: "42 Edgefield Road", size: "Small", rooms: 17, floors: 3, file: "Edgefield.png", info: "تتميز بوجود غرف نوم كثيرة وممرات ضيقة." },
-            { name: "10 Ridgeview Court", size: "Small", rooms: 15, floors: 3, file: "Ridgeview.png", info: "منزل سكني يحتوي على قبو وطابقين علويين." },
-            { name: "Grafton Farmhouse", size: "Small", rooms: 13, floors: 2, file: "Grafton.png", info: "مزرعة خشبية واسعة، تفتقر لأماكن الاختباء." },
-            { name: "Bleasdale Farmhouse", size: "Small", rooms: 16, floors: 3, file: "Bleasdale.png", info: "مزرعة تحتوي على علية (Attic) خشبية واسعة." },
-            { name: "Camp Woodwind", size: "Small", rooms: 7, floors: 1, file: "Woodwind.png", info: "خريطة مفتوحة (مخيم)، خطيرة جداً في الصيد." },
-            { name: "Willow Street House", size: "Small", rooms: 10, floors: 2, file: "Willow.png", info: "منزل بدون طابق علوي، يحتوي على قبو فقط." },
-            { name: "Prison", size: "Large", rooms: 29, floors: 2, file: "Prison.png", info: "سجن ضخم، يتطلب ميكروفون صوت لتحديد الغرفة." },
-            { name: "Sunny Meadows", size: "Large", rooms: 69, floors: 2, file: "SunnyMeadows.png", info: "أكبر خريطة في اللعبة، مستشفى مجانين ضخم." },
-            { name: "Brownstone High School", size: "Large", rooms: 58, floors: 2, file: "School.png", info: "مدرسة ثانوية مهجورة بممرات طويلة جداً." }
-        ];
+            // ===== منطق التصميم المتحرك =====
+            const showRegisterLink = document.getElementById('showRegisterLink');
+            const showLoginLink = document.getElementById('showLoginLink');
 
-        const tarotCards = [
-            { name: "The Sun", file: "Sun.png", effect: "عقل 100%", desc: "تُعيد مستوى العقل (Sanity) الخاص باللاعب إلى 100% فوراً." },
-            { name: "The Moon", file: "Moon.png", effect: "عقل 0%", desc: "تُخفض مستوى العقل الخاص باللاعب إلى 0% فوراً." },
-            { name: "The Tower", file: "Tower.png", effect: "تفاعل", desc: "تُجبر الشبح على القيام بتفاعل (Interaction) في مكانه الحالي." },
-            { name: "Wheel of Fortune", file: "Wheel.png", effect: "حظ عشوائي", desc: "إذا احترقت باللون الأخضر تزيد العقل 25%، وإذا احترقت بالأحمر تنقصه 25%." },
-            { name: "The Devil", file: "Devil.png", effect: "حدث شبح", desc: "تُجبر الشبح على القيام بحدث (Ghost Event) بالقرب من اللاعب." },
-            { name: "Death", file: "Death.png", effect: "صيد ملعون", desc: "تُطلق صيداً ملعوناً فوراً (Cursed Hunt) لا يمكن منعه." },
-            { name: "The Hermit", file: "Hermit.png", effect: "حبس الشبح", desc: "تمنع الشبح من مغادرة غرفته أو التجول لمدة دقيقة كاملة." },
-            { name: "High Priestess", file: "Priestess.png", effect: "إحياء", desc: "تعيد إحياء لاعب ميت عشوائياً، أو تحفظ حياة أول لاعب يموت لاحقاً." },
-            { name: "The Fool", file: "Fool.png", effect: "خدعة", desc: "تظهر ككرت آخر في البداية ثم تتحول لكرت الغبي لتلغي التأثير." },
-            { name: "The Hanged Man", file: "Hanged.png", effect: "موت فوري", desc: "تقتل اللاعب الذي سحب الكرت فوراً دون أي فرصة للنجاة." }
-        ];
+            // التحويل بين تسجيل الدخول والتسجيل
+            showRegisterLink?.addEventListener('click', function(e) {
+                e.preventDefault();
+                animatedContainer.classList.add('active');
+            });
 
-        let included = [], excluded = [];
+            showLoginLink?.addEventListener('click', function(e) {
+                e.preventDefault();
+                animatedContainer.classList.remove('active');
+            });
 
-        function showTab(id, btn) {
-            document.querySelectorAll('.content-section').forEach(s => s.classList.remove('active'));
-            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-            document.getElementById(id).classList.add('active');
-            btn.classList.add('active');
-            if(id === 'cards-tab') renderCards();
-            if(id === 'maps-tab') renderMaps();
-            if(id === 'ghosts-tab') renderGhostList();
-        }
+            blueScreenLoginBtn?.addEventListener('click', function() {
+                animatedContainer.classList.remove('active');
+            });
 
-        document.querySelectorAll('.ev-btn').forEach(btn => {
-            btn.onclick = () => {
-                const val = btn.dataset.val;
-                if (!btn.classList.contains('included') && !btn.classList.contains('excluded')) {
-                    btn.classList.add('included'); included.push(val);
-                } else if (btn.classList.contains('included')) {
-                    btn.classList.remove('included'); btn.classList.add('excluded');
-                    included = included.filter(i => i !== val); excluded.push(val);
-                } else {
-                    btn.classList.remove('excluded'); excluded = excluded.filter(i => i !== val);
+            // ===== إعداد Supabase =====
+            const SUPABASE_URL = 'https://drnmmtpddixgpobcxijt.supabase.co';
+            const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRybm1tdHBkZGl4Z3BvYmN4aWp0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njg0MDQ1ODgsImV4cCI6MjA4Mzk4MDU4OH0.Ym58ylN2hiyruuZ5NVoFyS9ZCHKvRE0QRKiiS0qXWGU';
+            let supabaseClient = null;
+            try {
+                if (typeof supabase !== 'undefined') {
+                    supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
                 }
-                updateEvidence();
+            } catch (e) {
+                console.warn('Supabase client initialization failed', e);
+            }
+
+            // التحقق إذا كان المستخدم مسجل دخوله بالفعل
+            const isLoggedIn = localStorage.getItem('isLoggedIn');
+            const savedUsername = localStorage.getItem('username');
+            
+            if (isLoggedIn === 'true' && savedUsername) {
+                userWelcome.textContent = `مرحباً، ${savedUsername}!`;
+                if (loginHeaderBtn) loginHeaderBtn.style.display = 'none';
+                if (logoutBtn) logoutBtn.style.display = 'block';
+            }
+
+            // فتح نافذة تسجيل الدخول من الهيدر
+            loginHeaderBtn?.addEventListener('click', function() {
+                loginOverlay?.classList.add('active');
+                // إعادة تعيين إلى شاشة تسجيل الدخول عند الفتح
+                animatedContainer?.classList.remove('active');
+            });
+
+            // إغلاق نافذة تسجيل الدخول عند النقر خارجها
+            loginOverlay?.addEventListener('click', function(e) {
+                if (e.target === loginOverlay) {
+                    loginOverlay.classList.remove('active');
+                }
+            });
+
+            // ===== إدارة أدوار المستخدم =====
+            const registerRole = document.getElementById('registerRole');
+            const mediatorFields = document.getElementById('mediatorFields');
+            const mediatorType = document.getElementById('mediatorType');
+            const companyFields = document.getElementById('companyFields');
+            const companyLogoUpload = document.getElementById('companyLogoUpload');
+            const companyLogo = document.getElementById('companyLogo');
+            const logoPreview = document.getElementById('logoPreview');
+            const developerOverlay = document.getElementById('developerOverlay');
+            const closeDeveloperPopup = document.getElementById('closeDeveloperPopup');
+            const saveDeveloperInfo = document.getElementById('saveDeveloperInfo');
+            const developerCompanyName = document.getElementById('developerCompanyName');
+            const developerCompanyAddress = document.getElementById('developerCompanyAddress');
+
+            let developerInfo = {
+                companyName: '',
+                companyAddress: ''
             };
+
+            // متغيرات الملفات
+            let companyLogoFile = null;
+            let companyLogoUrl = '';
+
+            // عند تغيير الصفة
+            registerRole.addEventListener('change', function() {
+                const role = this.value;
+                
+                // إخفاء جميع الحقول الإضافية أولاً
+                mediatorFields.classList.remove('show');
+                companyFields.classList.remove('show');
+                
+                if (role === 'وسيط') {
+                    mediatorFields.classList.add('show');
+                } else if (role === 'مطور') {
+                    // فتح النافذة المنبثقة للمطور
+                    developerOverlay.classList.add('active');
+                } else if (role === 'شركة') {
+                    mediatorFields.classList.add('show');
+                    companyFields.classList.add('show');
+                    // تعيين نوع الوسيط إلى شركة
+                    mediatorType.value = 'شركة';
+                }
+            });
+
+            // عند تغيير نوع الوسيط
+            mediatorType.addEventListener('change', function() {
+                const type = this.value;
+                if (type === 'شركة') {
+                    companyFields.classList.add('show');
+                } else {
+                    companyFields.classList.remove('show');
+                }
+            });
+
+            // رفع صورة شعار الشركة
+            companyLogoUpload.addEventListener('click', function() {
+                companyLogo.click();
+            });
+
+            companyLogo.addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                if (file) {
+                    // التحقق من حجم الملف
+                    if (file.size > 5 * 1024 * 1024) {
+                        alert('حجم الملف كبير جداً! الحد الأقصى 5MB');
+                        return;
+                    }
+                    
+                    // التحقق من نوع الملف
+                    const validTypes = ['image/jpeg', 'image/jpg', 'image/png'];
+                    if (!validTypes.includes(file.type)) {
+                        alert('صيغة الملف غير مدعومة! يرجى رفع صورة بصيغة JPG أو PNG');
+                        return;
+                    }
+                    
+                    companyLogoFile = file;
+                    
+                    // عرض معاينة الصورة
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        companyLogoUrl = e.target.result;
+                        logoPreview.innerHTML = `<img src="${companyLogoUrl}" alt="شعار الشركة">`;
+                        logoPreview.style.display = 'block';
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+
+            // إدارة نافذة المطور
+            closeDeveloperPopup.addEventListener('click', function() {
+                developerOverlay.classList.remove('active');
+                registerRole.value = '';
+            });
+
+            saveDeveloperInfo.addEventListener('click', function() {
+                const companyName = developerCompanyName.value.trim();
+                const companyAddress = developerCompanyAddress.value.trim();
+                
+                if (!companyName || !companyAddress) {
+                    alert('الرجاء ملء جميع الحقول');
+                    return;
+                }
+                
+                developerInfo = {
+                    companyName: companyName,
+                    companyAddress: companyAddress
+                };
+                
+                developerOverlay.classList.remove('active');
+                alert('تم حفظ معلومات الشركة بنجاح! يمكنك الآن إكمال إنشاء الحساب.');
+            });
+
+            // ===== معالجة تسجيل الدخول =====
+            document.getElementById('loginForm')?.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                
+                const email = document.getElementById('loginEmail').value;
+                const password = document.getElementById('loginPassword').value;
+                
+                if (!email || !password) {
+                    alert('الرجاء ملء جميع الحقول');
+                    return;
+                }
+                
+                const submitBtn = this.querySelector('.animated-btn');
+                const originalText = submitBtn.innerHTML;
+                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> جاري الدخول...';
+                
+                try {
+                    // محاولة تسجيل الدخول عبر Supabase
+                    let loginResult = null;
+                    if (supabaseClient) {
+                        try {
+                            loginResult = await supabaseClient.auth.signInWithPassword({
+                                email: email,
+                                password: password
+                            });
+                            
+                            if (loginResult.error) {
+                                throw new Error(loginResult.error.message);
+                            }
+                            
+                            // جلب بيانات المستخدم
+                            const { data: userData, error: userError } = await supabaseClient
+                                .from('users')
+                                .select('*')
+                                .eq('email', email)
+                                .single();
+                                
+                            if (!userError && userData) {
+                                localStorage.setItem('userData', JSON.stringify(userData));
+                            }
+                            
+                        } catch (authError) {
+                            console.warn('Supabase auth failed, using local storage', authError);
+                        }
+                    }
+                    
+                    // حفظ بيانات المستخدم محلياً
+                    setTimeout(() => {
+                        localStorage.setItem('isLoggedIn', 'true');
+                        localStorage.setItem('username', email.split('@')[0] || 'مستخدم');
+                        
+                        submitBtn.innerHTML = '<i class="fas fa-check"></i> تم الدخول بنجاح';
+                        
+                        setTimeout(() => {
+                            loginOverlay.classList.remove('active');
+                            userWelcome.textContent = `مرحباً، ${email.split('@')[0] || 'مستخدم'}!`;
+                            if (loginHeaderBtn) loginHeaderBtn.style.display = 'none';
+                            if (logoutBtn) logoutBtn.style.display = 'block';
+                            document.getElementById('loginForm').reset();
+                            submitBtn.innerHTML = originalText;
+                        }, 1000);
+                    }, 1500);
+                } catch (error) {
+                    alert('خطأ في تسجيل الدخول: ' + error.message);
+                    submitBtn.innerHTML = originalText;
+                }
+            });
+
+            // ===== معالجة التسجيل =====
+            document.getElementById('registerForm')?.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                
+                const name = document.getElementById('registerName').value;
+                const email = document.getElementById('registerEmail').value;
+                const password = document.getElementById('registerPassword').value;
+                const mobile = document.getElementById('registerMobile').value;
+                const role = document.getElementById('registerRole').value;
+                
+                if (!name || !email || !password || !mobile || !role) {
+                    alert('الرجاء ملء جميع الحقول');
+                    return;
+                }
+                
+                if (password.length < 6) {
+                    alert('كلمة المرور يجب أن تكون 6 أحرف على الأقل');
+                    return;
+                }
+                
+                // التحقق من بيانات إضافية حسب الصفة
+                if (role === 'وسيط') {
+                    const mediatorTypeValue = document.getElementById('mediatorType').value;
+                    if (!mediatorTypeValue) {
+                        alert('الرجاء اختيار نوع الوسيط');
+                        return;
+                    }
+                    
+                    if (mediatorTypeValue === 'شركة') {
+                        const companyName = document.getElementById('companyName').value;
+                        if (!companyName) {
+                            alert('الرجاء إدخال اسم الشركة');
+                            return;
+                        }
+                    }
+                } else if (role === 'مطور') {
+                    if (!developerInfo.companyName || !developerInfo.companyAddress) {
+                        alert('الرجاء إدخال معلومات الشركة للمطور');
+                        developerOverlay.classList.add('active');
+                        return;
+                    }
+                } else if (role === 'شركة') {
+                    const companyName = document.getElementById('companyName').value;
+                    if (!companyName) {
+                        alert('الرجاء إدخال اسم الشركة');
+                        return;
+                    }
+                }
+                
+                const submitBtn = this.querySelector('.animated-btn');
+                const originalText = submitBtn.innerHTML;
+                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> جاري إنشاء الحساب...';
+                
+                try {
+                    // رفع صورة شعار الشركة إذا وجدت
+                    let logoUrl = '';
+                    if (companyLogoFile && supabaseClient) {
+                        try {
+                            const fileExt = companyLogoFile.name.split('.').pop();
+                            const fileName = `company_logo_${Date.now()}.${fileExt}`;
+                            
+                            const { data, error } = await supabaseClient.storage
+                                .from('company-logos')
+                                .upload(fileName, companyLogoFile);
+                            
+                            if (!error) {
+                                const { data: urlData } = supabaseClient.storage
+                                    .from('company-logos')
+                                    .getPublicUrl(fileName);
+                                
+                                logoUrl = urlData.publicUrl;
+                            }
+                        } catch (uploadError) {
+                            console.warn('Failed to upload logo:', uploadError);
+                        }
+                    }
+                    
+                    // محاولة التسجيل عبر Supabase
+                    let signUpResult = null;
+                    let userId = null;
+                    
+                    if (supabaseClient) {
+                        try {
+                            signUpResult = await supabaseClient.auth.signUp({
+                                email: email,
+                                password: password
+                            });
+                            
+                            if (signUpResult.error) {
+                                throw new Error(signUpResult.error.message);
+                            }
+                            
+                            userId = signUpResult.data?.user?.id;
+                            
+                            // تجميع بيانات المستخدم
+                            const userProfile = {
+                                id: userId,
+                                name: name,
+                                email: email,
+                                mobile: mobile,
+                                role: role,
+                                created_at: new Date().toISOString()
+                            };
+                            
+                            // إضافة بيانات إضافية حسب الصفة
+                            if (role === 'وسيط') {
+                                userProfile.mediator_type = document.getElementById('mediatorType').value;
+                                if (userProfile.mediator_type === 'شركة') {
+                                    userProfile.company_name = document.getElementById('companyName').value;
+                                    userProfile.company_logo = logoUrl;
+                                }
+                            } else if (role === 'مطور') {
+                                userProfile.company_name = developerInfo.companyName;
+                                userProfile.company_address = developerInfo.companyAddress;
+                            } else if (role === 'شركة') {
+                                userProfile.company_name = document.getElementById('companyName').value;
+                                userProfile.company_logo = logoUrl;
+                            }
+                            
+                            // حفظ بيانات المستخدم في جدول users
+                            const { error: insertError } = await supabaseClient
+                                .from('users')
+                                .insert([userProfile]);
+                                
+                            if (insertError) {
+                                console.warn('Error inserting user profile:', insertError);
+                                throw new Error('فشل في حفظ بيانات المستخدم');
+                            } else {
+                                localStorage.setItem('userData', JSON.stringify(userProfile));
+                            }
+                        } catch (authError) {
+                            console.warn('Supabase registration failed, using local storage', authError);
+                        }
+                    }
+                    
+                    // حفظ بيانات المستخدم محلياً
+                    setTimeout(() => {
+                        submitBtn.innerHTML = '<i class="fas fa-check"></i> تم إنشاء الحساب';
+                        
+                        setTimeout(() => {
+                            // بعد التسجيل الناجح، تحويل إلى تسجيل الدخول
+                            animatedContainer.classList.remove('active');
+                            document.getElementById('loginEmail').value = email;
+                            document.getElementById('registerForm').reset();
+                            submitBtn.innerHTML = originalText;
+                            
+                            // إعادة تعيين المتغيرات
+                            companyLogoFile = null;
+                            companyLogoUrl = '';
+                            logoPreview.innerHTML = '';
+                            logoPreview.style.display = 'none';
+                            developerInfo = { companyName: '', companyAddress: '' };
+                            
+                            // إخفاء الحقول الإضافية
+                            mediatorFields.classList.remove('show');
+                            companyFields.classList.remove('show');
+                            
+                            // حفظ بيانات المستخدم محلياً
+                            localStorage.setItem('isLoggedIn', 'true');
+                            localStorage.setItem('username', name);
+                            
+                            alert('تم إنشاء حسابك بنجاح! يمكنك الآن تسجيل الدخول');
+                        }, 1000);
+                    }, 2000);
+                } catch (error) {
+                    alert('خطأ في إنشاء الحساب: ' + error.message);
+                    submitBtn.innerHTML = originalText;
+                }
+            });
+
+            // ===== تسجيل الخروج =====
+            logoutBtn?.addEventListener('click', function() {
+                // تسجيل الخروج من Supabase
+                if (supabaseClient) {
+                    supabaseClient.auth.signOut();
+                }
+                
+                // مسح البيانات المحلية
+                localStorage.removeItem('isLoggedIn');
+                localStorage.removeItem('username');
+                localStorage.removeItem('userData');
+                
+                userWelcome.textContent = 'مرحباً بك في HOME LAND';
+                if (loginHeaderBtn) loginHeaderBtn.style.display = 'block';
+                if (logoutBtn) logoutBtn.style.display = 'none';
+            });
+
+            // ===== مسح فلاتر البحث =====
+            const clearFiltersBtn = document.querySelector('.btn-secondary');
+            if (clearFiltersBtn && clearFiltersBtn.textContent.includes('مسح الفلاتر')) {
+                clearFiltersBtn.addEventListener('click', function() {
+                    document.querySelectorAll('.search-filters select, .search-filters input').forEach(el => {
+                        if (el.tagName === 'SELECT') el.selectedIndex = 0;
+                        if (el.tagName === 'INPUT') el.value = '';
+                    });
+                });
+            }
+
+            // ===== تحسين عرض المحافظات =====
+            const originalSelect = document.getElementById('city');
+            const citySelect = document.getElementById('citySelect');
+            const cityBtn = document.getElementById('cityBtn');
+            const cityDropdown = document.getElementById('cityDropdown');
+            const cityGrid = document.getElementById('cityGrid');
+            const citySearch = document.getElementById('citySearch');
+            const cityBtnText = document.getElementById('cityBtnText');
+            const neighborhoodGroup = document.getElementById('neighborhoodGroup');
+            const neighborhoodSelect = document.getElementById('neighborhood');
+
+            // خريطة الأحياء لكل محافظة
+            const neighborhoodsMap = {
+                'كل المحافظات': {},
+                'السادات': {
+                    'المنطقة الذهبية': ['14', '22', '21', '29'],
+                    'الحي المتميز': [],
+                    'بيت الوطن': [],
+                    'أحياء حكومية/سكنية قديمة': ['المنطقة الأولى', 'المنطقة الثانية', 'المنطقة الرابعة', 'المنطقة الحادية عشرة'],
+                    'أحياء أخرى': ['حي الفردوس', 'حي النخيل', 'حي النرجس', 'حي الكوثر']
+                },
+                'أكتوبر الجديدة': {'الحي الأول': [], 'الحي الثاني': [], 'الحي الثالث': []},
+                'أسوان الجديدة': {'المنطقة الأولى': [], 'المنطقة الثانية': [], 'الحي السياحي': []},
+                '15 مايو': {'الحي الأول': [], 'الحي الثاني': [], 'المنطقة الصناعية': []},
+                'العبور الجديدة': {'المنطقة A': [], 'المنطقة B': [], 'المنطقة C': []},
+                'العاشر من رمضان': {'الحي الأول': [], 'الحي الثاني': [], 'الحي الثالث': [], 'المناطق الصناعية': []},
+                'الشروق': {'الشروق - الحي الأول': [], 'الشروق - الحي الثاني': [], 'الحي التجاري': []},
+                'السادس من أكتوبر': {'الحي الأول': [], 'الحى السابع': [], 'مدينة 6 أكتوبر - منطقة عباس': [], 'التجمع الخامس (قريب)': []},
+                'بدر': {'الحي الأول': [], 'الحي الثاني': []},
+                'المنيا الجديدة': {'القطاعات السكنية 1': [], 'القطاعات السكنية 2': []},
+                'المنصورة الجديدة': {'المنطقة السكنية A': [], 'المنطقة السكنية B': []},
+                'العلمين الجديدة': {'المنطقة الساحلية': [], 'المنطقة السكنية': []},
+                'سفنكس الجديدة': {'الحي الأول': [], 'الحي الثاني': []},
+                'دمياط الجديدة': {'المنطقة السكنية': [], 'المنطقة الصناعية': []},
+                'بني سويف الجديدة': {'الحي الأول': [], 'الحي الثاني': []},
+                'برج العرب الجديدة': {'المنطقة السكنية': [], 'المنطقة الصناعية': []},
+                'ناصر الجديدة - غرب اسوان': {'الحي الأول': [], 'الحي الثاني': []},
+                'قنا الجديدة': {'الحي الأول': [], 'الحي الثاني': []},
+                'سوهاج الجديدة': {'الحي الأول': [], 'الحي الثاني': []},
+                'التجمع': {'التجمع الخامس': [], 'التجمع الثالث': [], 'التجمع الأول': []},
+                'الإسكندرية': {'كل الأحياء': [], 'سموحة': [], 'ستانلي': [], 'سيدى جابر': [], 'العجمي': [], 'المنتزه': [], 'وسط المدينة': []},
+                'الإسماعيلية': {'كل الأحياء': [], 'فايد': [], 'القنطرة شرق': [], 'القنطرة غرب': []},
+                'أسوان': {'كل الأحياء': [], 'جبل سلع': [], 'الكورنيش': [], 'النوبة': []},
+                'أسيوط': {'كل الأحياء': [], 'أسيوط الجديدة': [], 'المنفلوطي': [], 'ديروط': []},
+                'الأقصر': {'كل الأحياء': [], 'حي الكرنك': [], 'الطود': [], 'القرنة': []},
+                'البحر الأحمر': {'الغردقة': [], 'مرسى علم': [], 'القصير': [], 'الشرم': []},
+                'البحيرة': {'دمنهور': [], 'كفر الدوار': [], 'رشيد': [], 'إدكو': []},
+                'بني سويف': {'بنى سويف': [], 'الواسطى': [], 'ناصر': [], 'ببا': [], 'الفشن': []},
+                'بورسعيد': {'الحي القديم': [], 'الضواحى': [], 'الجنوب': [], 'الشرق': []},
+                'جنوب سيناء': {'شرم الشيخ': [], 'دهب': [], 'نويبع': [], 'طابا': []},
+                'الجيزة': {'الهرم': [], 'الدقى': [], 'الشيخ زايد': [], 'الجيزة': [], 'الهرم - مناطق التوسعة': []},
+                'الدقهلية': {'المنصورة': [], 'طلخا': [], 'ميت غمر': [], 'بلقاس': [], 'دكرنس': []},
+                'دمياط': {'دمياط': [], 'دمياط الجديدة': [], 'فارسكور': [], 'السوكري': []},
+                'سوهاج': {'سوهاج': [], 'أخميم': [], 'البلينا': [], 'جرجا': []},
+                'السويس': {'السويس - الحي الأول': [], 'السويس - الحي الثاني': [], 'الزراعى': []},
+                'الشرقية': {'الزقازيق': [], 'القصاصين': [], 'بلبيس': [], 'فاقوس': [], 'منيا القمح': []},
+                'شمال سيناء': {'العريش': [], 'الشيخ زويد': [], 'رفح': []},
+                'الغربية': {'طنطا': [], 'المحلة الكبرى': [], 'كفر الزيات': [], 'زفتى': []},
+                'الفيوم': {'الفيوم': [], 'طامية': [], 'سنورس': [], 'إطسا': []},
+                'القاهرة': {'كل الأحياء': [], 'وسط المدينة': [], 'الزمالك': [], 'المعادي': [], 'مدينة نصر': [], 'المقطم': [], 'حلوان': [], 'المعصرة': [], 'السلام': []},
+                'القليوبية': {'شبرا الخيمة': [], 'بنها': [], 'قها': [], 'القناطر الخيرية': [], 'الخانكة': []},
+                'قنا': {'قنا': [], 'دشنا': [], 'نقادة': [], 'قفط': []},
+                'كفر الشيخ': {'كفر الشيخ': [], 'دسوق': [], 'بلطيم': [], 'مطوبس': [], 'بيلا': []},
+                'مطروح': {'مرسى مطروح': [], 'الحمام': [], 'النجيلة': [], 'الضبعة': []},
+                'المنوفية': {'شبين الكوم': [], 'مدينة السادات': [], 'منوف': [], 'قويسنا': []},
+                'المنيا': {'المنيا': [], 'مركز المنيا': [], 'مطاي': [], 'ملوي': []},
+                'الوادي الجديد': {'الخارجة': [], 'باريس': [], 'الفرافرة': [], 'بلاط': []}
+            };
+
+            // ملء قائمة المحافظات
+            function populateCities() {
+                cityGrid.innerHTML = '';
+                Array.from(originalSelect.options).forEach(opt => {
+                    const btn = document.createElement('button');
+                    btn.type = 'button';
+                    btn.className = 'city-item';
+                    btn.textContent = opt.textContent;
+                    btn.dataset.value = opt.textContent;
+                    if (opt.selected) btn.classList.add('active');
+                    btn.addEventListener('click', () => {
+                        for (let i = 0; i < originalSelect.options.length; i++) {
+                            if (originalSelect.options[i].text === btn.dataset.value) {
+                                originalSelect.selectedIndex = i;
+                                break;
+                            }
+                        }
+                        originalSelect.dispatchEvent(new Event('change'));
+                        cityBtnText.textContent = btn.dataset.value;
+                        cityDropdown.classList.remove('open');
+                        cityDropdown.setAttribute('aria-hidden', 'true');
+                        cityGrid.querySelectorAll('.city-item').forEach(ci => ci.classList.remove('active'));
+                        btn.classList.add('active');
+                    });
+                    cityGrid.appendChild(btn);
+                });
+            }
+
+            populateCities();
+
+            // ملء الأحياء بناءً على المحافظة المختارة
+            function populateNeighborhoods(cityName) {
+                neighborhoodSelect.innerHTML = '';
+                const data = neighborhoodsMap[cityName];
+                if (!data) {
+                    neighborhoodSelect.innerHTML = '<option>لا توجد بيانات أحياء لهذه المحافظة</option>';
+                    neighborhoodGroup.classList.remove('show');
+                    return;
+                }
+
+                const neighborhoodsObj = Array.isArray(data) ? Object.fromEntries(data.map(n => [n, []])) : data;
+
+                Object.keys(neighborhoodsObj).forEach(neighborhood => {
+                    const areas = neighborhoodsObj[neighborhood];
+                    if (areas.length > 0) {
+                        const optgroup = document.createElement('optgroup');
+                        optgroup.label = neighborhood;
+                        areas.forEach(area => {
+                            const o = document.createElement('option');
+                            o.textContent = area;
+                            o.value = `${neighborhood}|${area}`;
+                            optgroup.appendChild(o);
+                        });
+                        neighborhoodSelect.appendChild(optgroup);
+                    } else {
+                        const o = document.createElement('option');
+                        o.textContent = neighborhood;
+                        o.value = neighborhood;
+                        neighborhoodSelect.appendChild(o);
+                    }
+                });
+
+                neighborhoodGroup.classList.add('show');
+            }
+
+            // عند تغيير المحافظة
+            originalSelect.addEventListener('change', function() {
+                const sel = originalSelect.options[originalSelect.selectedIndex].text;
+                if (sel === 'كل المحافظات') {
+                    neighborhoodGroup.classList.remove('show');
+                    neighborhoodSelect.innerHTML = '<option>اختر المحافظة أولاً</option>';
+                } else {
+                    populateNeighborhoods(sel);
+                }
+                const activeGridItem = cityGrid.querySelector(`.city-item[data-value="${sel}"]`);
+                if (activeGridItem) {
+                    cityGrid.querySelectorAll('.city-item').forEach(ci => ci.classList.remove('active'));
+                    activeGridItem.classList.add('active');
+                    cityBtnText.textContent = sel;
+                }
+            });
+
+            // فتح/إغلاق قائمة المحافظات
+            cityBtn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                cityDropdown.classList.toggle('open');
+                cityDropdown.setAttribute('aria-hidden', !cityDropdown.classList.contains('open'));
+                if (cityDropdown.classList.contains('open')) citySearch.focus();
+            });
+
+            // البحث في المحافظات
+            citySearch.addEventListener('input', function() {
+                const q = citySearch.value.trim().toLowerCase();
+                cityGrid.querySelectorAll('.city-item').forEach(it => {
+                    const txt = it.textContent.trim().toLowerCase();
+                    it.style.display = txt.includes(q) ? '' : 'none';
+                });
+            });
+
+            // إغلاق القائمة عند النقر خارجها
+            document.addEventListener('click', function(e) {
+                if (!citySelect.contains(e.target) && cityDropdown.classList.contains('open')) {
+                    cityDropdown.classList.remove('open');
+                    cityDropdown.setAttribute('aria-hidden', 'true');
+                }
+            });
+
+            // إعادة تعيين عند مسح الفلاتر
+            const clearFiltersBtn2 = document.querySelector('.btn-secondary');
+            if (clearFiltersBtn2 && clearFiltersBtn2.textContent.includes('مسح الفلاتر')) {
+                clearFiltersBtn2.addEventListener('click', function() {
+                    neighborhoodGroup.classList.remove('show');
+                    neighborhoodSelect.innerHTML = '<option>اختر المحافظة أولاً</option>';
+                    cityBtnText.textContent = 'كل المحافظات';
+                    originalSelect.selectedIndex = 0;
+                    cityGrid.querySelectorAll('.city-item').forEach(ci => ci.classList.remove('active'));
+                });
+            }
+
+            // تشغيل مبدئي
+            if (originalSelect.selectedIndex > 0) {
+                originalSelect.dispatchEvent(new Event('change'));
+            }
+
+            // ===== نسيت كلمة المرور =====
+            document.getElementById('forgotPassword')?.addEventListener('click', function(e) {
+                e.preventDefault();
+                alert('سيتم إرسال رابط إعادة تعيين كلمة المرور إلى بريدك الإلكتروني');
+            });
         });
-
-        function updateEvidence() {
-            const filtered = ghosts.filter(g => included.every(e => g.evidence.includes(e)) && !excluded.some(e => g.evidence.includes(e)));
-            document.getElementById('evidence-results').innerHTML = filtered.map(g => `
-                <div class="result-card">
-                    <h3 style="margin:0 0 10px 0;">👻 ${g.name} <span class="tag speed-tag" style="float:left">${g.speed}</span></h3>
-                    <div style="margin:10px 0;">${g.evidence.map(ev => `<span class="tag evidence-tag">${ev}</span>`).join('')}</div>
-                    <ul class="info-list" style="margin-top:10px;">
-                        ${g.info.map(i => `<li style="font-size:0.85rem; padding:8px;">${i}</li>`).join('')}
-                    </ul>
-                </div>
-            `).join('');
-        }
-
-        function resetEvidence() {
-            included = []; excluded = [];
-            document.querySelectorAll('.ev-btn').forEach(b => b.classList.remove('included', 'excluded'));
-            updateEvidence();
-        }
-
-        function renderGhostList(query = "") {
-            const list = document.getElementById('ghost-list');
-            const filtered = ghosts.filter(g => 
-                g.name.toLowerCase().includes(query.toLowerCase()) || 
-                g.info.some(i => i.toLowerCase().includes(query.toLowerCase())) ||
-                g.speed.toLowerCase().includes(query.toLowerCase())
-            );
-            list.innerHTML = filtered.map(g => `<div class="list-item" onclick="viewGhost('${g.name}', this)">${g.name} <small style="float:left">${g.speed}</small></div>`).join('');
-        }
-
-        function viewGhost(name, el) {
-            document.querySelectorAll('.list-item').forEach(li => li.classList.remove('selected'));
-            el.classList.add('selected');
-            const g = ghosts.find(x => x.name === name);
-            document.getElementById('ghost-details').innerHTML = `
-                <h1 style="color:var(--accent-color); margin-top:0;">👻 ${g.name}</h1>
-                <div style="margin-bottom:20px;">
-                    <span class="tag speed-tag" style="font-size:1rem;">السرعة: ${g.speed}</span>
-                    ${g.evidence.map(e => `<span class="tag evidence-tag">${e}</span>`).join('')}
-                </div>
-                <h3>المعلومات والقدرات الفنية الكاملة:</h3>
-                <ul class="info-list">${g.info.map(i => `<li>${i}</li>`).join('')}</ul>
-            `;
-        }
-
-        function renderMaps() {
-            const list = document.getElementById('maps-list');
-            list.innerHTML = maps.map((m, i) => `<div class="list-item" onclick="viewMap(${i}, this)">${m.name}</div>`).join('');
-        }
-
-        function viewMap(i, el) {
-            document.querySelectorAll('#maps-list .list-item').forEach(li => li.classList.remove('selected'));
-            el.classList.add('selected');
-            const m = maps[i];
-            document.getElementById('map-details').innerHTML = `
-                <h1>🗺️ ${m.name}</h1>
-                <img src="maps/${m.file}" class="map-img" onerror="this.src='https://via.placeholder.com/600x350?text=${m.name}+Layout'">
-                <div style="display:flex; gap:10px; margin-bottom:20px;">
-                    <span class="tag">الحجم: ${m.size}</span>
-                    <span class="tag">الغرف: ${m.rooms}</span>
-                    <span class="tag">الطوابق: ${m.floors}</span>
-                </div>
-                <p style="background:#222; padding:15px; border-radius:8px;">${m.info}</p>
-            `;
-        }
-
-        function renderCards() {
-            document.getElementById('cards-container').innerHTML = tarotCards.map(c => `
-                <div class="tarot-card">
-                    <img src="cards/${c.file}" onerror="this.src='https://via.placeholder.com/90x140?text=${c.name}'">
-                    <h3 style="color:var(--accent-color); margin:5px 0;">${c.name}</h3>
-                    <p style="font-weight:bold; color:#fff; margin:5px 0;">${c.effect}</p>
-                    <p style="font-size:0.8rem; color:#aaa; line-height:1.4;">${c.desc}</p>
-                </div>
-            `).join('');
-        }
-
-        renderGhostList();
-        renderMaps();
     </script>
 </body>
 </html>
